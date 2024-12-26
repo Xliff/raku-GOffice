@@ -38,30 +38,69 @@ class GOffice::Path {
     );
   }
 
+  multi method arc (
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $r,
+    Num()  $th0 is copy,
+    Num()  $th1 is copy,
+          :$deg           = False
+  ) {
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
+    ($th0, $th1) .= map({ π / 2 - $_ });
+
+    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+
+    samewith($cx, $cy, $rx, $ry, $th0, $th1);
+  }
   method arc (
-    Num() $cx,
-    Num() $cy,
-    Num() $rx,
-    Num() $ry,
-    Num() $th0,
-    Num() $th1
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $rx,
+    Num()  $ry,
+    Num()  $th0 is copy,
+    Num()  $th1 is copy,
+          :$deg           = False
   ) {
     my gdouble ($ccx, $ccy, $rrx, $rry, $tth0, $tth1) =
-     ($cx, $cy, $rx, $ry, $th0, $th1);
+      ($cx, $cy, $rx, $ry, $th0, $th1);
+
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
 
     go_path_arc($!gop, $ccx, $ccy, $rrx, $rry, $tth0, $tth1);
   }
 
-  method arc_to (
-    Num() $cx,
-    Num() $cy,
-    Num() $rx,
-    Num() $ry,
-    Num() $th0,
-    Num() $th1
+  proto multi method arc_to (|)
+  { * }
+
+  multi method arc_to (
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $r,
+    Num()  $th0 is copy,
+    Num()  $th1 is copy,
+          :$deg           = False
+  ) {
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
+    ($th0, $th1) .= map({ π / 2 - $_ });
+
+    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+
+    samewith($cx, $cy, $rx, $ry, $th0, $th1);
+  }
+  multi method arc_to (
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $rx,
+    Num()  $ry,
+    Num()  $th0 is copy,
+    Num()  $th1 is copy,
+          :$deg          = False
   ) {
     my gdouble ($ccx, $ccy, $rrx, $rry, $tth0, $tth1) =
-     ($cx, $cy, $rx, $ry, $th0, $th1);
+      ($cx, $cy, $rx, $ry, $th0, $th1);
+
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
 
     go_path_arc_to($!gop, $ccx, $ccy, $rrx, $rry, $tth0, $tth1);
   }
@@ -179,16 +218,37 @@ class GOffice::Path {
     go_path_move_to($!gop, $xx, $yy);
   }
 
-  method pie_wedge (
-    Num() $cx,
-    Num() $cy,
-    Num() $rx,
-    Num() $ry,
-    Num() $th0,
-    Num() $th1
+  proto method pie_wedge (|)
+  { * }
+
+  multi method pie_wedge (
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $r,
+    Num()  $th0 is copy,
+    Num()  $th1 is copy,
+          :$deg           = False
+  ) {
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
+    ($th0, $th1) .= map({ π / 2 - $_ });
+
+    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+
+    samewith($cx, $cy, $rx, $ry, $th0, $th1);
+  }
+  multi method pie_wedge (
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $rx,
+    Num()  $ry,
+    Num()  $th0 is copy,
+    Num()  $th1 is copy,
+          :$deg          = False
   ) {
     my gdouble ($ccx, $ccy, $rrx, $rry, $tth0, $tth1) =
      ($cx, $cy, $rx, $ry, $th0, $th1);
+
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
 
     go_path_pie_wedge($!gop, $ccx, $ccy, $rrx, $rry, $tth0, $tth1);
   }
@@ -204,18 +264,39 @@ class GOffice::Path {
     self;
   }
 
+  proto method ring_wedge (|)
+  { * }
+  
+  multi method ring_wedge (
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $r,
+    Num()  $th0 is copy,
+    Num()  $th1 is copy,
+          :$deg           = False
+  ) {
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
+    ($th0, $th1) .= map({ π / 2 - $_ });
+
+    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+
+    samewith($cx, $cy, $rx, $ry, $th0, $th1);
+  }
   method ring_wedge (
-    Num() $cx,
-    Num() $cy,
-    Num() $rx_out,
-    Num() $ry_out,
-    Num() $rx_in,
-    Num() $ry_in,
-    Num() $th0,
-    Num() $th1
+    Num()  $cx,
+    Num()  $cy,
+    Num()  $rx_out,
+    Num()  $ry_out,
+    Num()  $rx_in,
+    Num()  $ry_in,
+    Num()  $th0      is copy,
+    Num()  $th1      is copy,
+          :$deg               = False
   ) {
     my gdouble ($ccx, $ccy, $rxo, $ryo, $rxi, $ryi, $tth0, $tth1) =
      ($cx, $cy, $rx_out, $ry_out, $rx_in, $ry_in, $th0, $th1);
+
+    ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
 
     go_path_ring_wedge(
       $!gop,
