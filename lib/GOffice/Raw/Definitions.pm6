@@ -35,3 +35,4 @@ class GOValBucketer        is repr<CPointer> does GLib::Roles::Pointers is expor
 class GOUndo               is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GocGroup             is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GocItem              is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogRenderer          is repr<CPointer> does GLib::Roles::Pointers is export { }
