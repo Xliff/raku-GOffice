@@ -283,6 +283,21 @@ class GOPoint is repr<CStruct> is export {
 	has GODistance $!y;
 }
 
+class GocPoints is repr<CStruct> is export> {
+	has guint    $!n;
+	has guint    $!refs;
+	has gpointer $!points; #= [GocPoint]
+
+	method points {
+		GLib::Roles::TypedBuffer[GocPoint].new( $!points, size => $!n );
+	}
+
+	method elems {
+		$!n
+	}
+}
+
+
 class GOProgressRange is repr<CStruct> is export {
 	has gdouble $!min;
 	has gdouble $!max;
@@ -432,6 +447,23 @@ class GoView is repr<CStruct> is export {
 	has GObject $!base;
 }
 
+class GocCanvas is repr<CStruct> is export {
+	HAS GtkLayout    $!base           ;
+	has GObject      $!base           ;
+	has gdouble      $!scroll_x1      ;
+	has gdouble      $!scroll_y1      ;
+	has gdouble      $!pixels_per_unit;
+	has gint         $.width           is rw;
+	has gint         $.height          is rw;
+	has GocGroup     $!root           ;
+	has GocItem      $!grabbed_item   ;
+	has GocItem      $!last_item      ;
+	has GODoc        $!document       ;
+	has GdkEvent     $!cur_event      ;
+	has GocDirection $!direction      ;
+	has gpointer     $!priv           ;
+}
+
 class GocItem is repr<CStruct> is export {
 	HAS GObject          $!base         ;
 	has GocCanvas        $!canvas       ;
@@ -471,23 +503,6 @@ class GocArc is repr<CStruct> is export {
 	has gpointer      $!priv       ;
 }
 
-class GocCanvas is repr<CStruct> is export {
-	HAS GtkLayout    $!base           ;
-	has GObject      $!base           ;
-	has gdouble       $!scroll_x1      ;
-	has gdouble       $!scroll_y1      ;
-	has gdouble       $!pixels_per_unit;
-	has gint          $.width           is rw;
-	has gint          $.height          is rw;
-	has GocGroup     $!root           ;
-	has GocItem      $!grabbed_item   ;
-	has GocItem      $!last_item      ;
-	has GODoc        $!document       ;
-	has GdkEvent     $!cur_event      ;
-	has GocDirection $!direction      ;
-	has gpointer     $!priv           ;
-}
-
 class GocCircle is repr<CStruct> is export {
 	HAS GocStyledItem $!base  ;
 	has gdouble        $!x     ;
@@ -522,9 +537,13 @@ class GocImage is repr<CStruct> is export {
 }
 
 class GocIntArray is repr<CStruct> is export {
-	has gint $.refs is rw;
-	has gint $.n    is rw;
-	has gint $.vals is rw;
+	has gint         $.refs is rw;
+	has gint         $.n    is rw;
+	has CArray[gint] $!vals is rw;
+
+	method vals {
+		$!vals[ ^$!n ]
+	}
 }
 
 class GocLine is repr<CStruct> is export {
@@ -561,8 +580,12 @@ class GocPixbuf is repr<CStruct> is export {
 }
 
 class GocPoint is repr<CStruct> is export {
-	has gdouble $!x;
-	has gdouble $!y;
+	has gdouble $.x is rw;
+	has gdouble $.y is rw;
+
+	method set (Num() $x, Num() $y) {
+		($!x, $!y) = ($x, $y);
+  }
 }
 
 class GocPoints is repr<CStruct> is export {
