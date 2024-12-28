@@ -9,6 +9,9 @@ use GLib::Raw::Structs;
 use Pango::Raw::Definitions;
 use Pango::Raw::Structs;
 use GDK::Raw::Definitions;
+use GDK::Raw::Structs;
+use GTK::Raw::Definitions;
+use GTK::Raw::Structs;
 use GOffice::Raw::Definitions;
 use GOffice::Raw::Enums;
 
@@ -53,17 +56,17 @@ class GOData is repr<CStruct> is export {
 	has gint32  $.flags is rw;
 }
 
+class GODataMatrixSize is repr<CStruct> {
+  has int $.rows;
+  has int $.columns;
+}
+
 class GODataMatrix is repr<CStruct> is export {
 	HAS GOData           $!base   ;
 	has GODataMatrixSize $!size   ;
 	has gdouble           $!values ;
 	has gdouble           $!minimum;
 	has gdouble           $!maximum;
-}
-
-class GODataMatrixSize is repr<CStruct> is export {
-	has gint $.rows    is rw;
-	has gint $.columns is rw;
 }
 
 class GODataScalar is repr<CStruct> is export {
@@ -168,7 +171,7 @@ class GOIOContext is repr<CStruct> is export {
 	has gboolean         $!warning_occurred;
 	has GList            $!progress_ranges ;
 	has gdouble           $!progress_min    ;
-	has gdouble           $!progress_max    ;
+	has gdouble           $!prGOFontogress_max    ;
 	has gdouble          $!last_progress   ;
 	has gdouble          $!last_time       ;
 	has GOProgressHelper $!helper          ;
@@ -186,7 +189,7 @@ class GOImage is repr<CStruct> is export {
 	has gsize     $!data_length;
 }
 
-class GOImageFormatInfo is REPR<CStruct> is export {
+class GOImageFormatInfo is repr<CStruct> is export {
 	has GOImageFormat $!format          ;
 	has Str          $!name            ;
 	has Str          $!desc            ;
@@ -279,11 +282,24 @@ class GOPluginServiceSimple is repr<CStruct> is export {
 # }
 
 class GOPoint is repr<CStruct> is export {
-	has GODistance $!x;
-	has GODistance $!y;
+	has GODistance $.x is rw;
+	has GODistance $.y is rw;
+
+	method set (Num() $x, Num() $y) {
+		($!x, $!y) = ($x, $y);
+	}
 }
 
-class GocPoints is repr<CStruct> is export> {
+class GocPoint is repr<CStruct> is export {
+  has gdouble $.x is rw;
+	has gdouble $.y is rw;
+
+	method set (Num() $x, Num() $y) {
+		($!x, $!y) = ($x, $y);
+	}
+}
+
+class GocPoints is repr<CStruct> is export {
 	has guint    $!n;
 	has guint    $!refs;
 	has gpointer $!points; #= [GocPoint]
@@ -303,38 +319,64 @@ class GOProgressRange is repr<CStruct> is export {
 	has gdouble $!max;
 }
 
-class GOQuadD_ is repr<CStruct> is export {
-	has Decimal64 $!h;
-	has Decimal64 $!l;
+class GOQuad is repr<CStruct> is export {
+	has gdouble $.h is rw;
+	has gdouble $.l is rw;
+};
+
+
+class GOQuadD is repr<CStruct> is export {
+	has Decimal64 $.h is rw;
+	has Decimal64 $.l is rw;
 }
 
-class GOQuadMatrixD_ is repr<CStruct> is export {
-	has GOQuadD $!data;
-	has gint     $.m    is rw;
-	has gint     $.n    is rw;
+class GOQuadMatrixD is repr<CStruct> is export {
+	has CArray[gpointer] $!data       ;  # [[GOQuad]]
+	has gint             $.m     is rw;
+	has gint             $.n     is rw;
+
+	method data {
+		my ($m, $n) = ($!m, $!n);
+
+		my \T = class :: {
+			method elems { $m }
+
+			method AT-POS (Int() \k) {
+				return Nil unless k ~~ 0 .. $.elems;
+
+				GLib::Roles::TypedBuffer[GOQuadD].new(size => $n);
+			}
+	  }
+		T.new;
+  }
 }
 
-class GOQuadMatrix_ is repr<CStruct> is export {
+class GOQuadMatrix is repr<CStruct> is export {
 	has GOQuad $!data;
 	has gint    $.m    is rw;
 	has gint    $.n    is rw;
+
+	method data {
+		my ($m, $n) = ($!m, $!n);
+
+		my \T = class :: {
+			method elems { $m }
+
+			method AT-POS (Int() \k) {
+				return Nil unless k ~~ 0 .. $.elems;
+
+				GLib::Roles::TypedBuffer[GOQuad].new(size => $n);
+			}
+	  }
+		T.new;
+  }
 }
 
-class GOQuadMatrixl_ is repr<CStruct> is export {
-	has GOQuadl $!data;
-	has gint     $.m    is rw;
-	has gint     $.n    is rw;
-}
-
-class GOQuad_ is repr<CStruct> is export {
-	has gdouble $!h;
-	has gdouble $!l;
-}
-
-class GOQuadl_ is repr<CStruct> is export {
-	has gdouble $!h;
-	has gdouble $!l;
-}
+# class GOQuadMatrixl is repr<CStruct> is export {
+# 	has GOQuadl $!data;
+# 	has gint     $.m    is rw;
+# 	has gint     $.n    is rw;
+# }
 
 class GORect is repr<CStruct> is export {
 	has GODistance $!top   ;
@@ -346,7 +388,7 @@ class GORect is repr<CStruct> is export {
 class GORegexp is repr<CStruct> is export {
 	has size_t   $!re_nsub;
 	has gboolean $!nosub  ;
-	has void     $!ppcre  ;
+	has gpointer $!ppcre  ;
 }
 
 class GORegmatch is repr<CStruct> is export {
@@ -384,19 +426,44 @@ class GOServiceSimple is repr<CStruct> is export {
 	HAS GOService $!base;
 }
 
+
 class GOStyleLine is repr<CStruct> is export {
-	has gdouble            $!width      ;
-	has GOLineDashType    $!dash_type  ;
-	has gboolean          $!auto_dash  ;
-	has GOColor           $!color      ;
-	has GOColor           $!fore       ;
-	has gboolean          $!auto_color ;
-	has gboolean          $!auto_fore  ;
-	has gboolean          $!auto_width ;
-	has GOPatternType     $!pattern    ;
-	has cairo_line_cap_t  $!cap        ;
-	has cairo_line_join_t $!join       ;
-	has gdouble            $!miter_limit;
+	has gdouble                  $!width      ;
+	has GOLineDashType           $!dash_type  ;
+	has gboolean                 $!auto_dash  ;
+	has GOColor                  $!color      ;
+	has GOColor                  $!fore       ;
+	has gboolean                 $!auto_color ;
+	has gboolean                 $!auto_fore  ;
+	has gboolean                 $!auto_width ;
+	has GOPatternType            $!pattern    ;
+	has Cairo::cairo_line_cap_t  $!cap        ;
+	has Cairo::cairo_line_join_t $!join       ;
+	has gdouble                  $!miter_limit;
+}
+
+class GOStyleInnerFillGradient is repr<CStruct> {
+	has GOGradientDirection $.dir;
+	has gdouble             $.brightness;
+	has gboolean            $.auto_dir;
+	has gboolean            $.auto_brightness;
+}
+
+class GOStyleInnerFillImage is repr<CStruct> {
+	has GOImageType $.type;
+	has GOImage     $.image;
+}
+
+class GOStyleInnerFill is repr<CStruct> {
+	has GOStyleFill              $.type;
+	has gboolean                 $.auto_type;
+	has gboolean                 $.auto_fore;
+	has gboolean                 $.auto_back;
+	has gboolean                 $.auto_pattern;
+	has gboolean                 $.invert_if_negative;
+	has GOPattern                $.pattern;
+	HAS GOStyleInnerFillGradient $.gradient;
+	HAS GOStyleInnerFillImage    $.image;
 }
 
 class GOStyleMark is repr<CStruct> is export {
@@ -404,6 +471,30 @@ class GOStyleMark is repr<CStruct> is export {
 	has gboolean $!auto_shape        ;
 	has gboolean $!auto_outline_color;
 	has gboolean $!auto_fill_color   ;
+}
+
+class GOStyleFont is repr<CStruct> {
+	HAS GOColor  $.color;
+	has GOFont   $.font;
+	has gboolean $.auto_scale;
+	has gboolean $.auto_color;
+	has gboolean $.auto_font;
+}
+
+class GOStyleTextLayout is repr<CStruct> {
+  has gdouble   $.angle;
+  has gboolean  $.auto_angle;
+}
+
+class GOStyle is repr<CStruct> is export {
+  HAS GObject           $.base;
+  has GOStyleFlag       $.interesting_fields;
+  has GOStyleFlag       $.disable_theming;
+  HAS GOStyleLine       $.line;
+  HAS GOStyleInnerFill  $.fill;
+  HAS GOStyleMark       $.marker;
+  HAS GOStyleFont       $.font;
+  HAS GOStyleTextLayout $.text_layout;
 }
 
 class GOUndo is repr<CStruct> is export {
@@ -447,9 +538,10 @@ class GoView is repr<CStruct> is export {
 	has GObject $!base;
 }
 
+class GocItem is repr<CStruct> is export { ... }
+
 class GocCanvas is repr<CStruct> is export {
 	HAS GtkLayout    $!base           ;
-	has GObject      $!base           ;
 	has gdouble      $!scroll_x1      ;
 	has gdouble      $!scroll_y1      ;
 	has gdouble      $!pixels_per_unit;
@@ -464,21 +556,22 @@ class GocCanvas is repr<CStruct> is export {
 	has gpointer     $!priv           ;
 }
 
-class GocItem is repr<CStruct> is export {
-	HAS GObject          $!base         ;
-	has GocCanvas        $!canvas       ;
-	has GocGroup         $!parent       ;
-	has gboolean         $!cached_bounds;
-	has gboolean         $!visible      ;
-	has gboolean         $!realized     ;
-	has gdouble           $!x0           ;
-	has gdouble           $!y0           ;
-	has gdouble           $!x1           ;
-	has gdouble           $!y1           ;
-	has cairo_operator_t $!op           ;
-	has cairo_matrix_t   $!transform    ;
-	has gboolean         $!transformed  ;
-	has gpointer         $!priv         ;
+
+class GocItem {
+	HAS GObject                 $!base         ;
+	has GocCanvas               $!canvas       ;
+	has GocGroup                $!parent       ;
+	has gboolean                $!cached_bounds;
+	has gboolean                $!visible      ;
+	has gboolean                $!realized     ;
+	has gdouble                 $!x0           ;
+	has gdouble                 $!y0           ;
+	has gdouble                 $!x1           ;
+	has gdouble                 $!y1           ;
+	has Cairo::cairo_operator_t $!op           ;
+	has Cairo::cairo_matrix_t   $!transform    ;
+	has gboolean                $!transformed  ;
+	has gpointer                $!priv         ;
 }
 
 class GocStyledItem is repr<CStruct> is export {
@@ -539,7 +632,7 @@ class GocImage is repr<CStruct> is export {
 class GocIntArray is repr<CStruct> is export {
 	has gint         $.refs is rw;
 	has gint         $.n    is rw;
-	has CArray[gint] $!vals is rw;
+	has CArray[gint] $!vals      ;
 
 	method vals {
 		$!vals[ ^$!n ]
@@ -577,21 +670,6 @@ class GocPixbuf is repr<CStruct> is export {
 	has gdouble    $!rotation;
 	has GdkPixbuf $!pixbuf  ;
 	has gpointer  $!priv    ;
-}
-
-class GocPoint is repr<CStruct> is export {
-	has gdouble $.x is rw;
-	has gdouble $.y is rw;
-
-	method set (Num() $x, Num() $y) {
-		($!x, $!y) = ($x, $y);
-  }
-}
-
-class GocPoints is repr<CStruct> is export {
-	has gint      $.n      is rw;
-	has gint      $.refs   is rw;
-	has GocPoint $.points is rw;
 }
 
 class GocPolygon is repr<CStruct> is export {
@@ -656,10 +734,11 @@ class GogViewAllocation is repr<CStruct> is export {
 	has gdouble $.x is rw;
 	has gdouble $.y is rw;
 }
+constant GOGeometryAABR is export := GogViewAllocation;
 
 class GogObjectRoleUser is repr<CUnion> {
 	has gint		 $.i;
-	has gpointer$.p;
+	has gpointer $.p;
 }
 
 class GogObjectRole is repr<CStruct> is export {
@@ -668,7 +747,7 @@ class GogObjectRole is repr<CStruct> is export {
 	has guint               $.priority;
 
 	has guint32		  	      $.allowable_positions;
-	HAS GogObjectPosition 	$.default_position;
+	has GogObjectPosition 	$.default_position;
 	has GogObjectNamingConv	$.naming_conv;
 	has gpointer            $.can_add;              #= gboolean   (*can_add)	  (GogObject const *parent);
 	has gpointer            $.can_remove;           #= gboolean   (*can_remove)  (GogObject const *child);
@@ -688,7 +767,7 @@ class GogObject is repr<CStruct> is export {
 	has GogObjectRole     $.role;
 	has GogObject	        $.parent;
 	has GSList		        $.children;
-	HAS GogObjectPosition $.position;
+	has GogObjectPosition $.position;
  	HAS GogViewAllocation $.manual_position;
 
 	# unsigned needs_update : 1;
@@ -711,6 +790,38 @@ class GogOutlinedObject is repr<CStruct> is export {
 
 class GogTrendLine is repr<CStruct> is export {
 	has GogStyledObject $!base;
+}
+
+class GogChart is repr<CStruct> is export {
+	HAS GogOutlinedObject $!base               ;
+	has GSList            $!plots              ;
+	has gint               $.full_cardinality    is rw;
+	has gint               $.visible_cardinality is rw;
+	has gboolean          $!cardinality_valid  ;
+	has gint               $.x_pos               is rw;
+	has gint               $.y_pos               is rw;
+	has gint               $.cols                is rw;
+	has gint               $.rows                is rw;
+	has gint               $.x_pos_actual        is rw;
+	has gint               $.y_pos_actual        is rw;
+	has GogObject         $!grid               ;
+	has GSList            $!axes               ;
+	has GogAxisSet        $!axis_set           ;
+	has GogViewAllocation $!plot_area          ;
+	has gboolean          $!is_plot_area_manual;
+}
+
+class GogDatasetElement is repr<CStruct> is export {
+  has GOData     $.data;
+  has GogDataset $.set;
+  has gint       $.dim_i;
+  has gulong     $.handler;
+}
+
+class GogAxisTickProperties is repr<CStruct> is export {
+  has gboolean $.tick_in  is rw;
+	has gboolean $.tick_out is rw;
+  has gint     $.size_pts is rw;
 }
 
 class GogAxisBase is repr<CStruct> is export {
@@ -740,31 +851,6 @@ class GogAxisTick is repr<CStruct> is export {
 	has GOString         $!str     ;
 }
 
-class GogAxisTickProperties is repr<CStruct> is export {
-	has gboolean $!tick_in ;
-	has gboolean $!tick_out;
-	has gint      $.size_pts is rw;
-}
-
-class GogChart is repr<CStruct> is export {
-	HAS GogOutlinedObject $!base               ;
-	has GSList            $!plots              ;
-	has gint               $.full_cardinality    is rw;
-	has gint               $.visible_cardinality is rw;
-	has gboolean          $!cardinality_valid  ;
-	has gint               $.x_pos               is rw;
-	has gint               $.y_pos               is rw;
-	has gint               $.cols                is rw;
-	has gint               $.rows                is rw;
-	has gint               $.x_pos_actual        is rw;
-	has gint               $.y_pos_actual        is rw;
-	has GogObject         $!grid               ;
-	has GSList            $!axes               ;
-	has GogAxisSet        $!axis_set           ;
-	has GogViewAllocation $!plot_area          ;
-	has gboolean          $!is_plot_area_manual;
-}
-
 class GogChartMapPolarData is repr<CStruct> is export {
 	has gdouble $!cx ;
 	has gdouble $!cy ;
@@ -772,6 +858,12 @@ class GogChartMapPolarData is repr<CStruct> is export {
 	has gdouble $!ry ;
 	has gdouble $!th0;
 	has gdouble $!th1;
+}
+
+class GogSeriesLabelElt is repr<CStruct> is export {
+	has GOString  $!str       ;
+	has gint       $.legend_pos is rw;
+	has GogObject $!point     ;
 }
 
 class GogDataLabel is repr<CStruct> is export {
@@ -786,13 +878,6 @@ class GogDataLabel is repr<CStruct> is export {
 	has GogDatasetElement  $!custom_label    ;
 	has GogSeriesLabelElt  $!element         ;
 	has gboolean           $!supports_percent;
-}
-
-class GogDatasetElement is repr<CStruct> is export {
-	has GOData     $!data   ;
-	has GogDataset $!set    ;
-	has gint        $.dim_i   is rw;
-	has gulong     $!handler;
 }
 
 class GogErrorBar is repr<CStruct> is export {
@@ -824,6 +909,11 @@ class GogOutlinedView is repr<CStruct> is export {
 	HAS GogView $!base;
 }
 
+class GogPlotDesc is repr<CStruct> is export {
+	has gint           $.num_series_max is rw;
+	has GogSeriesDesc $!series        ;
+}
+
 class GogPlot is repr<CStruct> is export {
 	HAS GogObject             $!base                 ;
 	has GSList                $!series               ;
@@ -838,11 +928,6 @@ class GogPlot is repr<CStruct> is export {
 	has GOLineInterpolation   $!interpolation        ;
 	has GogAxis               $!axis                 ;
 	has GogPlotDesc           $!desc                 ;
-}
-
-class GogPlotDesc is repr<CStruct> is export {
-	has gint           $.num_series_max is rw;
-	has GogSeriesDesc $!series        ;
 }
 
 class GogPlotView is repr<CStruct> is export {
@@ -865,12 +950,6 @@ class GogRegCurve is repr<CStruct> is export {
 class GogSeriesElement is repr<CStruct> is export {
 	HAS GogStyledObject $!base ;
 	has gint             $.index is rw;
-}
-
-class GogSeriesLabelElt is repr<CStruct> is export {
-	has GOString  $!str       ;
-	has gint       $.legend_pos is rw;
-	has GogObject $!point     ;
 }
 
 class GogSeriesLabels is repr<CStruct> is export {

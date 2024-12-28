@@ -45,7 +45,7 @@ our enum GocArcTypeEnum is export <
   ARC_TYPE_ARC
   ARC_TYPE_CHORD
   ARC_TYPE_PIE
->
+>;
 
 constant GOArrowType is export := guint32;
 our enum GOArrowTypeEnum is export <
@@ -709,3 +709,18 @@ our enum GogSeriesPriorityEnum is export <
   GOG_SERIES_OPTIONAL
   GOG_SERIES_ERRORS
 >;
+
+constant GogAxisSet is export := guint32;
+our enum GogAxisSetEnum is export (
+  GOG_AXIS_SET_UNKNOWN      => -1,
+  GOG_AXIS_SET_NONE         => 0,
+  GOG_AXIS_SET_X            => (1  +< GOG_AXIS_X),
+  GOG_AXIS_SET_XY           => (1  +< GOG_AXIS_X) +| (1 +< GOG_AXIS_Y),
+  GOG_AXIS_SET_XY_pseudo_3d => (1  +< GOG_AXIS_X) +| (1 +< GOG_AXIS_Y) +| (1 +< GOG_AXIS_PSEUDO_3D),
+  GOG_AXIS_SET_XY_COLOR     => (1  +< GOG_AXIS_X) +| (1 +< GOG_AXIS_Y) +| (1 +< GOG_AXIS_COLOR),
+  GOG_AXIS_SET_XY_BUBBLE    => (1  +< GOG_AXIS_X) +| (1 +< GOG_AXIS_Y) +| (1 +< GOG_AXIS_BUBBLE),
+  GOG_AXIS_SET_XYZ          => (1  +< GOG_AXIS_X) +| (1 +< GOG_AXIS_Y) +| (1 +< GOG_AXIS_Z),
+  GOG_AXIS_SET_RADAR        => (1  +< GOG_AXIS_CIRCULAR) +| (1 +< GOG_AXIS_RADIAL),
+  GOG_AXIS_SET_FUNDAMENTAL  => (1 +< GOG_AXIS_VIRTUAL) - 1,
+  GOG_AXIS_SET_ALL          => (1 +< GOG_AXIS_TYPES) - 1
+);
