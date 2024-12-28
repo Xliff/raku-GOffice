@@ -239,7 +239,7 @@ sub go_path_set_options (
 sub go_path_to_cairo (
   GOPath          $path,
   GOPathDirection $direction,
-  cairo_t         $cr
+  Cairo::cairo_t  $cr
 )
   is      native(goffice)
   is      export

@@ -2,8 +2,11 @@ use v6.c;
 
 use NativeCall;
 
+use Cairo;
 use GLib::Raw::Definitions;
+use GDK::Raw::Structs;
 use GOffice::Raw::Definitions;
+use GOffice::Raw::Enums;
 use GOffice::Raw::Structs;
 
 unit package GOffice::Raw::Canvas;
@@ -73,7 +76,7 @@ sub goc_canvas_get_item_at (
 { * }
 
 sub goc_canvas_get_pixels_per_unit (GocCanvas $canvas)
-  returns double
+  returns gdouble
   is      native(goffice)
   is      export
 { * }
@@ -131,21 +134,21 @@ sub goc_canvas_invalidate (
 { * }
 
 sub goc_canvas_invalidate_region (
-  GocCanvas      $canvas,
-  GocItem        $item,
-  cairo_region_t $region
+  GocCanvas             $canvas,
+  GocItem               $item,
+  Cairo::cairo_region_t $region
 )
   is      native(goffice)
   is      export
 { * }
 
 sub goc_canvas_render (
-  GocCanvas $canvas,
-  cairo_t   $cr,
-  gdouble   $x0,
-  gdouble   $y0,
-  gdouble   $x1,
-  gdouble   $y1
+  GocCanvas      $canvas,
+  Cairo::cairo_t $cr,
+  gdouble        $x0,
+  gdouble        $y0,
+  gdouble        $x1,
+  gdouble        $y1
 )
   is      native(goffice)
   is      export

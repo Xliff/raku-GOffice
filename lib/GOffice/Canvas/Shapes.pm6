@@ -8,9 +8,10 @@ use GOffice::Raw::Types;
 use GDK::Pixbuf;
 #use GOffice::Image;
 use GOffice::Path;
+use GOffice::Canvas::StyledItem; # cw: Must come BEFORE ::Item!
+use GOffice::Canvas::Item;
 use GOffice::Canvas::Points;
-use GOffice::Canvas::StyledItem;
-#use GOffice::Graph::Renderer;
+use GOffice::Graph::Renderer;
 
 our subset GocArcAncestry is export of Mu
   where GocArc | GocStyledItemAncestry;
@@ -57,24 +58,24 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
 
   method ang1-degrees is rw {
     Proxy.new:
-      FETCH => $           { },
-      STORE => $, Num() \r {
+      FETCH => -> $           { },
+      STORE => -> $, Num() \r {
         $.ang1 = r * π / 180;
       }
   }
 
   method ang2-degrees is rw {
     Proxy.new:
-      FETCH => $           { },
-      STORE => $, Num() \r {
+      FETCH => -> $           { },
+      STORE => -> $, Num() \r {
         $.ang2 = r * π / 180;
       }
   }
 
   method radius is rw {
     Proxy.new:
-      FETCH => $           { },
-      STORE => $, Num() \r {
+      FETCH => -> $           { },
+      STORE => -> $, Num() \r {
         say "You may want to set .ang1, first!" unless $!quiet.not || $.ang1;
         ($.xr, $.yr) = (r * $.ang1.cos, r * $.ang1.sin);
       }
@@ -166,7 +167,7 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
   }
 
   # Type: int
-  method type is rw ( :$enum = True ) is g-property {
+  method type ( :$enum = True ) is rw is g-property {
     my $gv = GLib::Value.new( G_TYPE_INT );
     Proxy.new(
       FETCH => sub ($) {
@@ -416,7 +417,7 @@ class GOffice::Canvas::Ellipse is GOffice::Canvas::StyledItem {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
-        self.prop_get('width', $gv);.getTypePair
+        self.prop_get('width', $gv);
         $gv.double;
       },
       STORE => -> $, Num() $val is copy {
@@ -471,8 +472,7 @@ class GOffice::Canvas::Graph is GOffice::Canvas::Item {
   has GocGraph $!gog is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
-    self.setGocGraph($goffice-canvas-shape)
-      if $goffice-canvas-shape
+    self.setGocGraph($goffice-canvas-shape) if $goffice-canvas-shape
   }
 
   method setGocGraph (GocGraphAncestry $_) {
@@ -727,7 +727,7 @@ class GOffice::Canvas::Image is GOffice::Canvas::Item {
   }
 
   # Type: GOImage
-  method image is rw  is g-property {
+  method image ( :$raw = False ) is rw  is g-property {
     my $gv = GLib::Value.new( GOffice::Image.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -1030,7 +1030,7 @@ class GOffice::Canvas::Path is GOffice::Canvas::StyledItem {
   }
 
   # Type: GOPath
-  method path is rw ( :$raw = False ) is g-property {
+  method path ( :$raw = False ) is rw is g-property {
     my $gv = GLib::Value.new( GOffice::Path.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -1658,7 +1658,7 @@ class GOffice::Canvas::Text is GOffice::Canvas::StyledItem {
   }
 
   # Type: GOAnchorType
-  method anchor is rw  is g-property {
+  method anchor ( :$enum = False ) is rw  is g-property {
     my $gv = GLib::Value.new( GOffice::Enums::AnchorType.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -1824,7 +1824,7 @@ our subset GocWidgetAncestry is export of Mu
   where GocWidget | GocStyledItemAncestry;
 
 class GOffice::Canvas::Widget is GOffice::Canvas::Item {
-  has GocWidget $!gw implementor;
+  has GocWidget $!gcw is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
     self.setGocWidget($goffice-canvas-shape) if $goffice-canvas-shape
@@ -1833,7 +1833,7 @@ class GOffice::Canvas::Widget is GOffice::Canvas::Item {
   method setGocWidget (GocTextAncestry $_) {
     my $to-parent;
 
-    $!got = do {
+    $!gcw = do {
       when GocText {
         $to-parent = cast(GocItem, $_);
         $_;
@@ -1848,7 +1848,7 @@ class GOffice::Canvas::Widget is GOffice::Canvas::Item {
   }
 
   method GOffice::Raw::Definitions::GocWidget
-  { $!got }
+  { $!gcw }
 
   multi method new (
     $goffice-canvas-shape where * ~~ GocWidgetAncestry,
@@ -1878,7 +1878,7 @@ class GOffice::Canvas::Widget is GOffice::Canvas::Item {
   }
 
   # Type: GtkWidget
-  method widget is rw  is g-property {
+  method widget ( :$raw = False ) is rw  is g-property {
     my $gv = GLib::Value.new( GTK::Widget.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -1889,7 +1889,7 @@ class GOffice::Canvas::Widget is GOffice::Canvas::Item {
           |GTK::Widget.getTypePair
         );
       },
-      STORE => -> $, GtkWidget()d $val is copy {
+      STORE => -> $, GtkWidget() $val is copy {
         $gv.object = $val;
         self.prop_set('widget', $gv);
       }
@@ -1950,7 +1950,7 @@ class GOffice::Canvas::Widget is GOffice::Canvas::Item {
   method set_bounds (Num() $left, Num() $top, Num() $width, Num() $height) {
     my gdouble ($l, $t, $w, $h) = ($left, $top, $width, $height);
 
-    goc_widget_set_bounds($!gw, $l, $t, $w, $h);
+    goc_widget_set_bounds($!gcw, $l, $t, $w, $h);
   }
 }
 
@@ -2022,14 +2022,6 @@ sub goc_path_get_type
 
 sub goc_pixbuf_get_type
   returns GType
-  is      native(panel)
-  is      export
-{ * }
-
-### /usr/src/goffice/goffice/canvas/goc-polygon.h
-
-sub goc_polygon_get_type
-  returns GType
   is      native(goffice)
   is      export
 { * }
@@ -2038,7 +2030,7 @@ sub goc_polygon_get_type
 
 sub goc_polyline_get_type
   returns GType
-  is      native(panel)
+  is      native(goffice)
   is      export
 { * }
 
@@ -2046,7 +2038,7 @@ sub goc_polyline_get_type
 
 sub goc_rectangle_get_type
   returns GType
-  is      native(panel)
+  is      native(goffice)
   is      export
 { * }
 

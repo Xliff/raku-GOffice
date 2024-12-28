@@ -15,14 +15,14 @@ class GOffice::Canvas::IntArray {
   { }
 
   method GOffice::Raw::Structs::GocIntArray
-  { $!gip }
+  { $!gia }
 
   multi method new (GocPoints $goffice-canvas-array) {
     $goffice-canvas-array ?? self.bless( :$goffice-canvas-array ) !! Nil;
   }
 
   multi method new (Int() $n) {
-    my guint $nn                   = $n;;
+    my guint $nn                   = $n;
     my       $goffice-canvas-array = goc_int_array_new($nn);
 
     $goffice-canvas-array ?? self.bless( :$goffice-canvas-array ) !! Nil
@@ -34,7 +34,7 @@ class GOffice::Canvas::IntArray {
     unstable_get_type( self.^name, &goc_int_array_get_type, $n, $t );
   }
 
-  method AT-POS (\k) [
+  method AT-POS (\k) {
     return Nil unless k ~~ 0 .. $!gia.elems;
 
     $!gia.vals[k];
@@ -74,7 +74,7 @@ class GOffice::Canvas::Points {
     $o[$i++].set( .[0], .[1] ) for @points;
     $o;
   }
-  multi method new {
+  multi method new (Int() $n) {
     my guint $nn                    = $n;
     my       $goffice-canvas-points = goc_points_new($nn);
 
@@ -91,14 +91,14 @@ class GOffice::Canvas::Points {
     my guint $nn = $n;
 
     return Nil unless $n ~~ 0 .. $!gcp.elems;
-    propReturnObject( $
+    propReturnObject(
       $!gcp.points[$nn],
       $raw,
       |GOffice::Canvas::Point.getTypePair
     );
   }
 
-  method AT-POS (\k) [
+  method AT-POS (\k) {
     $.point-at(k);
   }
 

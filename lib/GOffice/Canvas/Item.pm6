@@ -1,21 +1,61 @@
-use v6.x;
+use v6.c;
 
+use Method::Also;
+
+use NativeCall;
 use GOffice::Raw::Types;
 use GOffice::Raw::Canvas::Item;
 
 use GDK::Window;
 use GTK::StyleContext;
-use GOffice::Canvas::Group;
 
-use GLib::Roles::Implementor;
 use GLib::Roles::Object;
+use GLib::Roles::Implementor;
+
+our subset GocItemAncestry is export of Mu
+  where GocItem | GObject;
 
 class GOffice::Canvas::Item {
-  has GocItem $!gi implementor;
+  also does GLib::Roles::Object;
 
-  multi method new ($arg is copy, *%a) {
+  has GocItem $!gi is implementor;
+
+  submethod BUILD ( :$goffice-canvas-item ) {
+    self.setGocItem($goffice-canvas-item) if $goffice-canvas-item
+  }
+
+  method setGocItem (GocItemAncestry $_) {
+    my $to-parent;
+
+    $!gi = do {
+      when GocItem {
+        $to-parent = cast(GObject, $_);
+        $_;
+      }
+
+      default {
+        $to-parent = $_;
+        cast(GocItem, $_);
+      }
+    }
+    self!setObject($to-parent);
+  }
+
+  method GOffice::Raw::Definitions::GocItem
+    is also<GocItem>
+  { $!gi }
+
+  multi method new ($arg is copy, :$ref = True, *%a) {
+    if $arg ~~ GocItemAncestry {
+      return unless $arg;
+
+      my $o = self.bless( goffice-canvas-item => $arg );
+      $o.ref if $ref;
+      return $o;
+    }
+
     if $arg ~~ Int {
-      return samewith(GocGroup, $type)
+      return samewith(GocGroup, $arg)
     }
 
     if $arg !~~ GocGroup {
@@ -39,7 +79,7 @@ class GOffice::Canvas::Item {
     $o;
   }
 
-  method bounds_changed {
+  method bounds_changed is also<bounds-changed> {
     goc_item_bounds_changed($!gi);
   }
 
@@ -60,18 +100,18 @@ class GOffice::Canvas::Item {
     :$array     = True,
     :$raw       = False
   ) {
-    samewith($x, $y, newCArray(GocItem), :$array, :$raw);
+    samewith($x, $y, GocItem.new, :$raw);
   }
   multi method distance (
-    Int()            $x,
-    Int()            $y,
-    CArray[GocItem]  $near_item,
-                    :$raw        = False
+    Int()      $x,
+    Int()      $y,
+    GocItem()  $near_item,
+              :$raw        = False
   ) {
     my gdouble ($xx, $yy) = ($x, $y);
 
     goc_item_distance($!gi, $x, $y, $near_item);
-    returnProperCanvasItem( ppr($near_item), $raw );
+    returnProperCanvasItem($near_item, $raw );
   }
 
   method draw (cairo_t() $cr) {
@@ -84,7 +124,9 @@ class GOffice::Canvas::Item {
     Num()     $y0,
     Num()     $x1,
     Num()     $y1
-  ) {
+  )
+    is also<draw-region>
+  {
     my gdouble ($xx0, $yy0, $xx1, $yy1) = ($x0, $y0, $x1, $y1);
 
     goc_item_draw_region($!gi, $cr, $xx0, $yy0, $xx1, $yy1);
@@ -94,25 +136,27 @@ class GOffice::Canvas::Item {
     goc_item_duplicate($!gi, $parent);
   }
 
-  method get_bounds ($x0 is rw, $y0 is rw, $x1 is rw, $y1 is rw) {
+  method get_bounds ($x0 is rw, $y0 is rw, $x1 is rw, $y1 is rw)
+    is also<get-bounds>
+  {
     my gdouble ($xx0, $yy0, $xx1, $yy1) = ($x0, $y0, $x1, $y1);
 
     goc_item_get_bounds($!gi, $xx0, $yy0, $xx1, $yy1);
   }
 
-  method get_operator {
+  method get_operator is also<get-operator> {
     goc_item_get_operator($!gi);
   }
 
-  method get_parent ( :$raw = False ) {
+  method get_parent ( :$raw = False ) is also<get-parent> {
     propReturnObject(
       goc_item_get_parent($!gi),
       $raw,
-      |GOffice::Canvas::Group.getTypePair
+      |::('GOffice::Canvas::Group').getTypePair
     );
   }
 
-  method get_style_context ( :$raw = False ) {
+  method get_style_context ( :$raw = False ) is also<get-style-context> {
     propReturnObject(
       goc_item_get_style_context($!gi),
       $raw,
@@ -120,13 +164,13 @@ class GOffice::Canvas::Item {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_item_get_type, $n, $t );
   }
 
-  method get_window ( :$raw = False ) {
+  method get_window ( :$raw = False ) is also<get-window> {
     propReturnObject(
       goc_item_get_window($!gi),
       $raw,
@@ -146,7 +190,7 @@ class GOffice::Canvas::Item {
     goc_item_invalidate($!gi);
   }
 
-  method is_visible {
+  method is_visible is also<is-visible> {
     goc_item_is_visible($!gi);
   }
 
@@ -156,7 +200,7 @@ class GOffice::Canvas::Item {
     goc_item_lower($!gi, $nn);
   }
 
-  method lower_to_bottom {
+  method lower_to_bottom is also<lower-to-bottom> {
     goc_item_lower_to_bottom($!gi);
   }
 
@@ -166,7 +210,7 @@ class GOffice::Canvas::Item {
     goc_item_raise($!gi, $nn);
   }
 
-  method raise_to_top {
+  method raise_to_top is also<raise-to-top> {
     goc_item_raise_to_top($!gi);
   }
 
@@ -174,17 +218,17 @@ class GOffice::Canvas::Item {
     goc_item_set($!gi, $first_arg_name);
   }
 
-  method set_operator (Int() $op) {
+  method set_operator (Int() $op) is also<set-operator> {
     my cairo_operator_t $o = $op;
 
     goc_item_set_operator($!gi, $o);
   }
 
-  method set_transform (cairo_matrix_t() $m) {
+  method set_transform (cairo_matrix_t() $m) is also<set-transform> {
     goc_item_set_transform($!gi, $m);
   }
 
-  method set_visible (Int() $visible) {
+  method set_visible (Int() $visible) is also<set-visible> {
     my gboolean $v = $visible.so.Int;
 
     goc_item_set_visible($!gi, $v);
@@ -200,7 +244,7 @@ class GOffice::Canvas::Item {
 
 }
 
-sub returnProperCanvasItem ($object is copy, :$raw = False) {
+sub returnProperCanvasItem ($object is copy, :$raw = False) is export {
   return $object if $raw;
 
   $object = cast(GObject, $object) unless $object ~~ GObject;

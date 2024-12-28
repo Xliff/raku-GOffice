@@ -7,6 +7,7 @@ use GLib::Raw::Definitions;
 use GDK::Raw::Definitions;
 use GTK::Raw::Definitions;
 use GOffice::Raw::Definitions;
+use GOffice::Raw::Structs;
 
 unit package GOffice::Raw::Canvas::Item;
 
@@ -43,7 +44,7 @@ sub goc_item_distance (
 
 sub goc_item_draw (
   GocItem $item,
-  cairo_t $cr
+  Cairo::cairo_t $cr
 )
   is      native(goffice)
   is      export
@@ -51,7 +52,7 @@ sub goc_item_draw (
 
 sub goc_item_draw_region (
   GocItem $item,
-  cairo_t $cr,
+  Cairo::cairo_t $cr,
   gdouble $x0,
   gdouble $y0,
   gdouble $x1,
@@ -186,7 +187,7 @@ sub goc_item_set_operator (
 
 sub goc_item_set_transform (
   GocItem        $item,
-  cairo_matrix_t $m
+  Cairo::cairo_matrix_t $m
 )
   is      native(goffice)
   is      export

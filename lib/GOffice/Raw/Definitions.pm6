@@ -43,11 +43,15 @@ class GOStrmapSel          is repr<CPointer> does GLib::Roles::Pointers is expor
 class GOVal                is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOValArray           is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOValBucketer        is repr<CPointer> does GLib::Roles::Pointers is export { }
+
 class GocGroup             is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GocGraph             is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GocWidget            is repr<CPointer> does GLib::Roles::Pointers is export { }
+
 class GogAxis              is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogAxisColorMap      is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogDataset           is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogRenderer          is repr<CPointer> does GLib::Roles::Pointers is export { }
-
 class GogSeries            is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogSeriesDesc        is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogTheme             is repr<CPointer> does GLib::Roles::Pointers is export { }

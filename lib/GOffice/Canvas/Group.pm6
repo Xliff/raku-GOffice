@@ -1,12 +1,12 @@
 use v6.c;
 
 use GOffice::Raw::Types;
-use Gffice::Raw::Canvas::Group;
+use GOffice::Raw::Canvas::Group;
 
 use GOffice::Canvas::Item;
 
 class GOffice::Canvas::Group is GOffice::Canvas::Item {
-  has GocGroup $!gct is implementor;
+  has GocGroup $!gcg is implementor;
 
   method new (GocGroup $parent = GocGroup) {
     my $goffice-canvas-group = goc_group_new($parent);
@@ -19,27 +19,27 @@ class GOffice::Canvas::Group is GOffice::Canvas::Item {
   }
 
   method adjust_bounds (
-    gdouble  $x0 is rw,
-    gdouble  $y0 is rw,
-    gdouble  $x1 is rw,
-    gdouble  $y1 is rw
+    Num() $x0 is rw,
+    Num() $y0 is rw,
+    Num() $x1 is rw,
+    Num() $y1 is rw
   ) {
-    goc_group_adjust_bounds($!gcg, $x0, $y0, $x1, $y1);
+    my gdouble ($xx0, $yy0, $xx1, $yy1) = ($x0, $y0, $x1, $y1);
+
+    goc_group_adjust_bounds($!gcg, $xx0, $yy0, $xx1, $yy1);
+    ($x0, $y0, $x1, $y1) = ($xx0, $yy0, $xx1, $yy1);
   }
 
-  method adjust_coords (
-    gdouble  $x is rw,
-    gdouble  $y is rw
-  ) {
+  method adjust_coords (Num() $x, Num() $y) {
+    my gdouble ($xx, $yy) = ($x, $y);
+
     goc_group_adjust_coords($!gcg, $x, $y);
   }
 
-  method cairo_transform (
-    cairo_t  $cr,
-    gdouble  $x,
-    gdouble  $y
-  ) {
-    goc_group_cairo_transform($!gcg, $cr, $x, $y);
+  method cairo_transform (cairo_t() $cr, Num() $x, Num() $y) {
+    my gdouble ($xx, $yy) = ($x, $y);
+
+    goc_group_cairo_transform($!gcg, $cr, $xx, $yy);
   }
 
   method clear {
@@ -47,7 +47,6 @@ class GOffice::Canvas::Group is GOffice::Canvas::Item {
   }
 
   method find_child (GocItem() $item) {
-
     goc_group_find_child($!gcg, $item);
   }
 
@@ -57,7 +56,7 @@ class GOffice::Canvas::Group is GOffice::Canvas::Item {
     goc_group_freeze($!gcg, $freeze);
   }
 
-  method get_child {
+  method get_child ( :$raw = False ) {
     returnProperCanvasItem(
       goc_group_get_child($!gcg),
       $raw
@@ -65,9 +64,9 @@ class GOffice::Canvas::Group is GOffice::Canvas::Item {
   }
 
   method get_children ( :$raw = False, :$garray = True ) {
-    my $ca = goc_group_get_children($!gcg)
+    my $ca = goc_group_get_children($!gcg);
     return $ca if $raw;
-    $ca = GLib::Array::Pointer.new($ca)
+    $ca = GLib::Array::Pointer.new($ca);
     return $ca if $garray;
     $ca.Array.map({ returnProperCanvasItem($_, False) });
   }

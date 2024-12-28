@@ -2,12 +2,13 @@ use v6.c;
 
 use Method::Also;
 
+use GLib::Raw::Traits;
 use GOffice::Raw::Types;
 use GOffice::Raw::Canvas;
 
 use GDK::Event;
 use GTK::Layout;
-use GOffice::Doc;
+#use GOffice::Doc;
 
 our subset GocCanvasAncestry is export of Mu
   where GocCanvas | GtkLayoutAncestry;
@@ -119,7 +120,7 @@ class GOffice::Canvas is GTK::Layout {
     my gdouble ($xx, $yy) = ($x,$y);
     my gint    ($XX, $YY) = 0 xx 2;
 
-    goc_canvas_c2w($!gc, $xx, $y      y, $XX, $YY);
+    goc_canvas_c2w($!gc, $xx, $yy, $XX, $YY);
     ($X, $Y) = ($XX, $YY);
   }
 
@@ -157,7 +158,7 @@ class GOffice::Canvas is GTK::Layout {
   method get_direction ( :$enum = True ) is also<get-direction> {
     my $d = goc_canvas_get_direction($!gc);
     return $d unless $enum;
-    GoDirectionEnum($d);
+    GODirectionEnum($d);
   }
 
   method get_document ( :$raw = False ) is also<get-document> {
@@ -252,7 +253,7 @@ class GOffice::Canvas is GTK::Layout {
     goc_canvas_invalidate($!gc, $xx0, $yy0, $xx1, $yy1);
   }
 
-  method invalidate_region (GocItem(      pixels_per_unit) $item, cairo_region_t() $region)
+  method invalidate_region (GocItem() $item, cairo_region_t() $region)
     is also<invalidate-region>
   {
     goc_canvas_invalidate_region($!gc, $item, $region);
@@ -299,10 +300,10 @@ class GOffice::Canvas is GTK::Layout {
   }
 
   multi method w2c (Int() $X, Int() $Y) {
-    samewith($X, $y, $, $);
+    samewith($X, $Y, $, $);
   }
   multi method w2c (Int() $X, Int() $Y, $x is rw, $y is rw) {
-    my gint    ($XX, $YY) = ($X, $Y)
+    my gint    ($XX, $YY) = ($X, $Y);
     my gdouble ($xx, $yy) = 0e0 xx 2;
 
     goc_canvas_w2c($!gc, $X, $Y, $xx, $yy);

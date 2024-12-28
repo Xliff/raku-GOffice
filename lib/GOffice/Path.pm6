@@ -1,7 +1,11 @@
 use v6.c;
 
-use GOffice::Raw::Typoes;
+use NativeCall;
+
+use GOffice::Raw::Types;
 use GOffice::Raw::Path;
+
+use GLib::Roles::Implementor;
 
 class GOffice::Path {
   has GOPath $!gop is implementor;
@@ -18,13 +22,13 @@ class GOffice::Path {
     $goffice-path ?? self.bless( :$goffice-path ) !! Nil
   }
 
-  method new_from_odf_enhanced_path (Str() $str, GHashTable() $variables) {
+  method new_from_odf_enhanced_path (Str() $src, GHashTable() $variables) {
     my $goffice-path =  go_path_new_from_odf_enhanced_path($src, $variables);
 
     $goffice-path ?? self.bless( :$goffice-path ) !! Nil
   }
 
-  method new_from_svg (Str() $str) {
+  method new_from_svg (Str() $src) {
     my $goffice-path = go_path_new_from_svg($src);
 
     $goffice-path ?? self.bless( :$goffice-path ) !! Nil
@@ -49,11 +53,11 @@ class GOffice::Path {
     ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
     ($th0, $th1) .= map({ π / 2 - $_ });
 
-    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+    my ($rx, $ry) = ($r * $th0.cos, $r * $th1.sin);
 
     samewith($cx, $cy, $rx, $ry, $th0, $th1);
   }
-  method arc (
+  multi method arc (
     Num()  $cx,
     Num()  $cy,
     Num()  $rx,
@@ -70,7 +74,7 @@ class GOffice::Path {
     go_path_arc($!gop, $ccx, $ccy, $rrx, $rry, $tth0, $tth1);
   }
 
-  proto multi method arc_to (|)
+  proto method arc_to (|)
   { * }
 
   multi method arc_to (
@@ -84,7 +88,7 @@ class GOffice::Path {
     ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
     ($th0, $th1) .= map({ π / 2 - $_ });
 
-    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+    my ($rx, $ry) = ($r * $th0.cos, $r * $th1.sin);
 
     samewith($cx, $cy, $rx, $ry, $th0, $th1);
   }
@@ -121,7 +125,7 @@ class GOffice::Path {
     )
   }
 
-  method copy_restricted (Int() $start, Int() $end) {
+  method copy_restricted (Int() $start, Int() $end, :$raw = False) {
     my gssize ($s, $e) = ($start, $end);
 
     propReturnObject(
@@ -197,7 +201,6 @@ class GOffice::Path {
       $!gop,
       $s,
       $e,
-      $d,
       &move_to,
       &line_to,
       &curve_to,
@@ -232,7 +235,7 @@ class GOffice::Path {
     ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
     ($th0, $th1) .= map({ π / 2 - $_ });
 
-    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+    my ($rx, $ry) = ($r * $th0.cos, $r * $th1.sin);
 
     samewith($cx, $cy, $rx, $ry, $th0, $th1);
   }
@@ -266,7 +269,7 @@ class GOffice::Path {
 
   proto method ring_wedge (|)
   { * }
-  
+
   multi method ring_wedge (
     Num()  $cx,
     Num()  $cy,
@@ -278,11 +281,11 @@ class GOffice::Path {
     ($th0, $th1) .= map({ $_ * π / 180 }) if $deg;
     ($th0, $th1) .= map({ π / 2 - $_ });
 
-    my ($rx, $ry) = ($r * $th0.cos, $tr * $th1.sin);
+    my ($rx, $ry) = ($r * $th0.cos, $r * $th1.sin);
 
     samewith($cx, $cy, $rx, $ry, $th0, $th1);
   }
-  method ring_wedge (
+  multi method ring_wedge (
     Num()  $cx,
     Num()  $cy,
     Num()  $rx_out,

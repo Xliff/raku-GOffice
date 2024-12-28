@@ -16,7 +16,7 @@ sub goc_int_array_get_type
   is      export
 { * }
 
-sub goc_int_array_new (guint $n);
+sub goc_int_array_new (guint $n)
   returns GocIntArray
   is      native(goffice)
   is      export
@@ -39,7 +39,7 @@ sub goc_points_get_type
   is      export
 { * }
 
-sub goc_points_new (guint $n);
+sub goc_points_new (guint $n)
   returns GocPoints
   is      native(goffice)
   is      export
