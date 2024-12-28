@@ -51,6 +51,7 @@ need GTK::Raw::Requisition;
 # need GSF::Raw::Definitions;
 # need GSF::Raw::Enums;
 # need GSF::Raw::Structs;
+need GOffice::Raw::Compat;
 need GOffice::Raw::Definitions;
 need GOffice::Raw::Enums;
 need GOffice::Raw::Structs;
