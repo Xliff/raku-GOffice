@@ -64,6 +64,25 @@ class GOffice::Canvas::StyledItem is GOffice::Canvas::Item {
       STORE => -> $, \v { self.set_scale_line_width(v) }
   }
 
+  # Type: GOStyle
+  method style ( :$raw = False ) is rw  is g-property {
+    my $gv = GLib::Value.new( GOffice::Style.get_type );
+    Proxy.new(
+      FETCH => sub ($) {
+        self.prop_get('style', $gv);
+        propReturnObject(
+          $gv.object,
+          $raw,
+          |GOffice::Style.getTypePair
+        );
+      },
+      STORE => -> $, GOStyle() $val is copy {
+        $gv.object = $val;
+        self.prop_set('style', $gv);
+      }
+    );
+  }
+
   method get_scale_line_width is also<get-scale-line-width> {
     goc_styled_item_get_scale_line_width($!gsi);
   }
