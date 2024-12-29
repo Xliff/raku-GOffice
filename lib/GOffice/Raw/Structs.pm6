@@ -132,27 +132,52 @@ class GOFilePermissions is repr<CStruct> is export {
 }
 
 class GOFont is repr<CStruct> is export {
-	has gint                  $.ref_count     is rw;
+	has gint                  $!ref_count          ;
 	has gint                  $.font_index    is rw;
-	has PangoFontDescription $!desc         ;
+	has PangoFontDescription  $!desc               ;
 	has gint                  $.underline     is rw;
-	has gboolean             $!strikethrough;
-	has GOColor              $!color        ;
+	has gboolean              $.strikethrough is rw;
+	has GOColor               $!color              ;
+
+	method desc is rw {
+		Proxy.new:
+			FETCH => -> $                            { $!desc      },
+			STORE => -> $, PangoFontDescription() \v { $!desc := v }
+	}
+
+	method color is rw {
+		Proxy.new:
+		 	FETCH => -> $,              { $!color      },
+			STORE => -> $, GOColor() \v { $!color := v }
+  }
 }
 
 class GOFontMetrics is repr<CStruct> is export {
-	has gint      $.digit_widths     is rw;
-	has gint      $.min_digit_width  is rw;
-	has gint      $.max_digit_width  is rw;
-	has gint      $.avg_digit_width  is rw;
-	has gint      $.hyphen_width     is rw;
-	has gint      $.minus_width      is rw;
-	has gint      $.plus_width       is rw;
-	has gint      $.E_width          is rw;
-	has gint      $.hash_width       is rw;
-	has gint      $.space_width      is rw;
-	has gunichar $!thin_space      ;
-	has gint      $.thin_space_width is rw;
+	HAS gint      @.digit_widths[10] is CArray;
+	has gint      $.min_digit_width           ;
+	has gint      $.max_digit_width           ;
+	has gint      $.avg_digit_width           ;
+	has gint      $.hyphen_width              ;
+	has gint      $.minus_width               ;
+	has gint      $.plus_width                ;
+	has gint      $.E_width                   ;
+	has gint      $.hash_width                ;
+	has gint      $.space_width               ;
+	has gunichar  $.thin_space                ;
+	has gint      $.thin_space_width          ;
+
+	method digit-widths     { @!digit_widths     }
+	method min-digit-width  { $!min_digit_width  }
+	method max-digit-width  { $!max_digit_width  }
+	method avg-digit-width  { $!avg_digit_width  }
+	method hyphen-width     { $!hyphen_width     }
+	method minus-width      { $!minus_width      }
+	method plus-width       { $!plus_width       }
+	method E-width          { $!E_width          }
+	method hash-width       { $!hash_width       }
+	method space-width      { $!space_width      }
+	method thin-space       { $!thin_space       }
+	method thin-space-width { $!thin_space_width }
 }
 
 class GOGeometryOBR is repr<CStruct> is export {
