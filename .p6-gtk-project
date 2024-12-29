@@ -1,7 +1,7 @@
 prefix= GOffice
 struct-prefix=GO
 modules=Panel:Raw::Types
-backups=backup,bitbucket,google-backup,azure-backup,hut
+backups=backup,bitbucket,google-backup,azure-backup,sourcehut
 hfile-prefix=
 lib=goffice
 include-directory=/usr/src/goffice/goffice
