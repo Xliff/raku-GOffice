@@ -45,32 +45,21 @@ class GOffice::Canvas::Item {
     is also<GocItem>
   { $!gi }
 
-  multi method new ($arg is copy, :$ref = True, *%a) {
-    if $arg ~~ GocItemAncestry {
-      return unless $arg;
-
-      my $o = self.bless( goffice-canvas-item => $arg );
-      $o.ref if $ref;
-      return $o;
-    }
-
-    if $arg ~~ Int {
-      return samewith(GocGroup, $arg)
-    }
-
-    if $arg !~~ GocGroup {
-      $arg .= GocGroup if $arg.^can('GocGroup');
-    }
-    $arg = GocGroup unless $arg;
-    X::GLib::InvalidType.new(
-      message => 'Argument to .new must be a GocGroup compatible object!'
-    ).throw unless $arg ~~ GocGroup;
-    samewith($arg, self.get_type, |%a);
-  }
-  multi method new (GocGroup() $parent, Int() $type, *%a) {
+  method create-pointer (GocGroup() $parent, Int() $type) {
     my GType $t = $type;
 
-    my $goffice-canvas-item = goc_item_new($parent, $t, Str);
+    goc_item_new($parent, $t, Str);
+  }
+
+  multi method new (GocItemAncestry $goffice-canvas-item, :$ref = True, *%a) {
+    return unless $goffice-canvas-item;
+
+    my $o = self.bless( :$goffice-canvas-item );
+    $o.ref if $ref;
+    return $o;
+  }
+  multi method new ($parent, $type, *%a) {
+    my $goffice-canvas-item = self.create-pointer($parent, $type);
 
     my $o = $goffice-canvas-item
       ?? self.bless( :$goffice-canvas-item )
