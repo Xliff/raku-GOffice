@@ -1,5 +1,7 @@
 use v6.c;
 
+use Method::Also;
+
 use NativeCall;
 
 use GLib::Raw::Traits;
@@ -16,7 +18,21 @@ use GOffice::Graph::Renderer;
 our subset GocArcAncestry is export of Mu
   where GocArc | GocStyledItemAncestry;
 
+role ShapeCanvasCreation {
+  multi method new (GocGroup() $parent, *%a) {
+    my $goffice-canvas-shape = $.create-pointer($parent, self.get_type);
+
+    my $o = $goffice-canvas-shape
+      ?? self.bless( :$goffice-canvas-shape )
+      !! Nil;
+    $o.setAttributess(%a) if $o && +%a;
+    $o;
+  }
+}
+
 class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocArc $!goa   is implementor;
   has        $!quiet is built;
 
@@ -41,7 +57,8 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
     self.setGocStyledItem($to-parent);
   }
 
-  method GOffice::Raw::Definitions::GocArc
+  method GOffice::Raw::Structs::GocArc
+    is also<GoArc>
   { $!goa }
 
   multi method new (
@@ -56,7 +73,7 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
     $o;
   }
 
-  method ang1-degrees is rw {
+  method ang1-degrees is rw is also<ang1_degrees> {
     Proxy.new:
       FETCH => -> $           { },
       STORE => -> $, Num() \r {
@@ -64,7 +81,7 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
       }
   }
 
-  method ang2-degrees is rw {
+  method ang2-degrees is rw is also<ang2_degrees> {
     Proxy.new:
       FETCH => -> $           { },
       STORE => -> $, Num() \r {
@@ -81,7 +98,7 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
       }
    }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_arc_get_type, $n, $t );
@@ -118,7 +135,11 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
   }
 
   # Type: GOArrowType
-  method end-arrow ( :$enum = True ) is rw  is g-property {
+  method end-arrow ( :$enum = True )
+    is rw
+    is g-property
+    is also<end_arrow>
+  {
     my $gv = GLib::Value.new( GOffice::Enums::Canvas::ArrowType.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -150,7 +171,11 @@ class GOffice::Canvas::Arc is GOffice::Canvas::StyledItem {
   }
 
   # Type: GocArrowType
-  method start-arrow ( :$enum = False ) is rw  is g-property {
+  method start-arrow ( :$enum = False )
+    is rw
+    is g-property
+    is also<start_arrow>
+  {
     my $gv = GLib::Value.new( GOffice::Enums::Canvas::ArrowType.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -249,6 +274,8 @@ our subset GocCircleAncestry is export of Mu
   where GocCircle | GocItemAncestry;
 
 class GOffice::Canvas::Circle is GOffice::Canvas::Item {
+  also does ShapeCanvasCreation;
+
   has GocCircle $!goc is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -332,7 +359,7 @@ class GOffice::Canvas::Circle is GOffice::Canvas::Item {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_circle_get_type, $n, $t );
@@ -344,6 +371,8 @@ our subset GocEllipseAncestry is export of Mu
   where GocEllipse | GocStyledItemAncestry;
 
 class GOffice::Canvas::Ellipse is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocEllipse $!goe is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -457,7 +486,7 @@ class GOffice::Canvas::Ellipse is GOffice::Canvas::StyledItem {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_ellipse_get_type, $n, $t );
@@ -469,6 +498,8 @@ our subset GocGraphAncestry is export of Mu
   where GocGraph | GocItemAncestry;
 
 class GOffice::Canvas::Graph is GOffice::Canvas::Item {
+  also does ShapeCanvasCreation;
+
   has GocGraph $!gog is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -601,7 +632,7 @@ class GOffice::Canvas::Graph is GOffice::Canvas::Item {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_graph_get_type, $n, $t );
@@ -613,6 +644,8 @@ our subset GocImageAncestry is export of Mu
   where GocImage | GocStyledItemAncestry;
 
 class GOffice::Canvas::Image is GOffice::Canvas::Item {
+  also does ShapeCanvasCreation;
+
   has GocImage $!goi is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -636,7 +669,8 @@ class GOffice::Canvas::Image is GOffice::Canvas::Item {
     self.setGocStyledItem($to-parent);
   }
 
-  method GOffice::Raw::Definitions::GocImage
+  method GOffice::Raw::Structs::GocImage
+    is also<GocImage>
   { $!goi }
 
   multi method new (
@@ -652,7 +686,7 @@ class GOffice::Canvas::Image is GOffice::Canvas::Item {
   }
 
   # Type: double
-  method crop-bottom is rw  is g-property {
+  method crop-bottom is rw  is g-property is also<crop_bottom> {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
@@ -667,7 +701,7 @@ class GOffice::Canvas::Image is GOffice::Canvas::Item {
   }
 
   # Type: double
-  method crop-left is rw  is g-property {
+  method crop-left is rw  is g-property is also<crop_left> {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
@@ -682,7 +716,7 @@ class GOffice::Canvas::Image is GOffice::Canvas::Item {
   }
 
   # Type: double
-  method crop-right is rw  is g-property {
+  method crop-right is rw  is g-property is also<crop_right> {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
@@ -697,7 +731,7 @@ class GOffice::Canvas::Image is GOffice::Canvas::Item {
   }
 
   # Type: double
-  method crop-top is rw  is g-property {
+  method crop-top is rw  is g-property is also<crop_top> {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
@@ -805,7 +839,7 @@ class GOffice::Canvas::Image is GOffice::Canvas::Item {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_image_get_type, $n, $t );
@@ -817,6 +851,8 @@ our subset GocLineAncestry is export of Mu
   where GocLine | GocStyledItemAncestry;
 
 class GOffice::Canvas::Line is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocLine $!gol is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -840,7 +876,8 @@ class GOffice::Canvas::Line is GOffice::Canvas::StyledItem {
     self.setGocStyledItem($to-parent);
   }
 
-  method GOffice::Raw::Definitions::GocLine
+  method GOffice::Raw::Structs::GocLine
+    is also<GocLine>
   { $!gol }
 
   multi method new (
@@ -856,7 +893,11 @@ class GOffice::Canvas::Line is GOffice::Canvas::StyledItem {
   }
 
   # Type: GocArrowType
-  method end-arrow ( :$enum = False ) is rw  is g-property {
+  method end-arrow ( :$enum = False )
+    is rw
+    is g-property
+    is also<end_arrow>
+  {
     my $gv = GLib::Value.new( GOffice::Enums::Canvas::ArrowType.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -873,7 +914,11 @@ class GOffice::Canvas::Line is GOffice::Canvas::StyledItem {
   }
 
   # Type: GocArrowType
-  method start-arrow ( :$enum = False ) is rw  is g-property {
+  method start-arrow ( :$enum = False )
+    is rw
+    is g-property
+    is also<start_arrow>
+  {
     my $gv = GLib::Value.new( GOffice::Enums::Canvas::ArrowType.get_type );
     Proxy.new(
       FETCH => sub ($) {
@@ -949,7 +994,7 @@ class GOffice::Canvas::Line is GOffice::Canvas::StyledItem {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_line_get_type, $n, $t );
@@ -961,6 +1006,8 @@ our subset GocPathAncestry is export of Mu
   where GocPath | GocStyledItemAncestry;
 
 class GOffice::Canvas::Path is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocPath $!gop is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -1015,7 +1062,7 @@ class GOffice::Canvas::Path is GOffice::Canvas::StyledItem {
   }
 
   # Type: boolean
-  method fill-rule is rw  is g-property {
+  method fill-rule is rw  is g-property is also<fill_rule> {
     my $gv = GLib::Value.new( G_TYPE_BOOLEAN );
     Proxy.new(
       FETCH => sub ($) {
@@ -1093,7 +1140,7 @@ class GOffice::Canvas::Path is GOffice::Canvas::StyledItem {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_path_get_type, $n, $t );
@@ -1105,6 +1152,8 @@ our subset GocPixbufAncestry is export of Mu
   where GocPixbuf | GocStyledItemAncestry;
 
 class GOffice::Canvas::Pixbuf is GOffice::Canvas::Item {
+  also does ShapeCanvasCreation;
+
   has GocPixbuf $!gop is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -1237,7 +1286,7 @@ class GOffice::Canvas::Pixbuf is GOffice::Canvas::Item {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_pixbuf_get_type, $n, $t );
@@ -1249,6 +1298,8 @@ our subset GocPolygonAncestry is export of Mu
   where GocPolygon | GocStyledItemAncestry;
 
 class GOffice::Canvas::Polygon is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocPolygon $!gop is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -1288,7 +1339,7 @@ class GOffice::Canvas::Polygon is GOffice::Canvas::StyledItem {
   }
 
   # Type: boolean
-  method fill-rule is rw  is g-property {
+  method fill-rule is rw  is g-property is also<fill_rule> {
     my $gv = GLib::Value.new( G_TYPE_BOOLEAN );
     Proxy.new(
       FETCH => sub ($) {
@@ -1341,7 +1392,7 @@ class GOffice::Canvas::Polygon is GOffice::Canvas::StyledItem {
   }
 
   # Type: boolean
-  method use-spline is rw  is g-property {
+  method use-spline is rw  is g-property is also<use_spline> {
     my $gv = GLib::Value.new( G_TYPE_BOOLEAN );
     Proxy.new(
       FETCH => sub ($) {
@@ -1356,7 +1407,7 @@ class GOffice::Canvas::Polygon is GOffice::Canvas::StyledItem {
   }
 
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_polygon_get_type, $n, $t );
@@ -1367,6 +1418,8 @@ our subset GocPolylineAncestry is export of Mu
   where GocPolyline | GocStyledItemAncestry;
 
 class GOffice::Canvas::Polyline is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocPolyline $!gcp is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -1425,7 +1478,7 @@ class GOffice::Canvas::Polyline is GOffice::Canvas::StyledItem {
   }
 
   # Type: boolean
-  method use-spline is rw  is g-property {
+  method use-spline is rw  is g-property is also<use_spline> {
     my $gv = GLib::Value.new( G_TYPE_BOOLEAN );
     Proxy.new(
       FETCH => sub ($) {
@@ -1439,7 +1492,7 @@ class GOffice::Canvas::Polyline is GOffice::Canvas::StyledItem {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_polyline_get_type, $n, $t );
@@ -1450,6 +1503,8 @@ our subset GocRectangleAncestry is export of Mu
   where GocRectangle | GocStyledItemAncestry;
 
 class GOffice::Canvas::Rectangle is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocRectangle $!gor is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -1608,7 +1663,7 @@ class GOffice::Canvas::Rectangle is GOffice::Canvas::StyledItem {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_rectangle_get_type, $n, $t );
@@ -1619,6 +1674,8 @@ our subset GocTextAncestry is export of Mu
   where GocText | GocStyledItemAncestry;
 
 class GOffice::Canvas::Text is GOffice::Canvas::StyledItem {
+  also does ShapeCanvasCreation;
+
   has GocText $!got is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -1642,8 +1699,12 @@ class GOffice::Canvas::Text is GOffice::Canvas::StyledItem {
     self.setGocStyledItem($to-parent);
   }
 
-  method GOffice::Raw::Definitions::GocText
+  method GOffice::Raw::Structs::GocText
+    is also<GocText>
   { $!got }
+
+  proto method new (|)
+  { * }
 
   multi method new (
     $goffice-canvas-shape where * ~~ GocTextAncestry,
@@ -1709,7 +1770,7 @@ class GOffice::Canvas::Text is GOffice::Canvas::StyledItem {
   }
 
   # Type: double
-  method clip-height is rw  is g-property {
+  method clip-height is rw  is g-property is also<clip_height> {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
@@ -1724,7 +1785,7 @@ class GOffice::Canvas::Text is GOffice::Canvas::StyledItem {
   }
 
   # Type: double
-  method clip-width is rw  is g-property {
+  method clip-width is rw  is g-property is also<clip_width> {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
@@ -1769,7 +1830,7 @@ class GOffice::Canvas::Text is GOffice::Canvas::StyledItem {
   }
 
   # Type: double
-  method wrap-width is rw  is g-property {
+  method wrap-width is rw  is g-property is also<wrap_width> {
     my $gv = GLib::Value.new( G_TYPE_DOUBLE );
     Proxy.new(
       FETCH => sub ($) {
@@ -1813,17 +1874,21 @@ class GOffice::Canvas::Text is GOffice::Canvas::StyledItem {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_text_get_type, $n, $t );
   }
 }
 
+use GTK::Widget;
+
 our subset GocWidgetAncestry is export of Mu
   where GocWidget | GocStyledItemAncestry;
 
 class GOffice::Canvas::Widget is GOffice::Canvas::Item {
+  also does ShapeCanvasCreation;
+
   has GocWidget $!gcw is implementor;
 
   submethod BUILD ( :$goffice-canvas-shape ) {
@@ -1941,13 +2006,13 @@ class GOffice::Canvas::Widget is GOffice::Canvas::Item {
     );
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &goc_widget_get_type, $n, $t );
   }
 
-  method set_bounds (Num() $left, Num() $top, Num() $width, Num() $height) {
+  method set_bounds (Num() $left, Num() $top, Num() $width, Num() $height) is also<set-bounds> {
     my gdouble ($l, $t, $w, $h) = ($left, $top, $width, $height);
 
     goc_widget_set_bounds($!gcw, $l, $t, $w, $h);
