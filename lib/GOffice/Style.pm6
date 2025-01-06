@@ -15,7 +15,18 @@ our subset GOStyleAncestry is export of Mu
 class GOffice::Style {
   also does GLib::Roles::Object;
 
-  has GOStyle $!gs is implementor;
+  has GOStyle $!gs is implementor handles<
+    font
+    line
+    marker
+    interesting-fields
+    interesting_fields
+    flags
+    disable-theming
+    disable_theming
+    text-layout
+    text_layout
+  >;
 
   submethod BUILD ( :$goffice-style ) {
     self.setGOStyle($goffice-style) if $goffice-style
@@ -38,7 +49,7 @@ class GOffice::Style {
     self!setObject($to-parent);
   }
 
-  method GOffice::Raw::Definitions::GOStyle
+  method GOffice::Raw::Structs::GOStyle
     is also<GOStyle>
   { $!gs }
 
@@ -81,7 +92,10 @@ class GOffice::Style {
     );
   }
 
-  method fill (cairo_t() $cr, Int() $preserve) {
+  multi method fill {
+    $!gs.fill;
+  }
+  multi method fill (cairo_t() $cr, Int() $preserve) {
     my gboolean $p = $preserve.so.Int;
 
     go_style_fill($!gs, $cr, $p);
