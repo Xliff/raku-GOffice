@@ -9,6 +9,7 @@ use GOffice::Raw::Canvas;
 use GDK::Event;
 use GTK::Layout;
 #use GOffice::Doc;
+use GOffice::Canvas::Group;
 
 our subset GocCanvasAncestry is export of Mu
   where GocCanvas | GtkLayoutAncestry;
