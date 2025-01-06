@@ -13,7 +13,11 @@ use GLib::Roles::Implementor;
 class GOffice::Font {
   also does GLib::Roles::Implementor;
 
-  has GOFont $!gf is implementor;
+  has GOFont $!gf is implementor handles<
+    strikethrough
+    underline
+    color
+  >;
 
   submethod BUILD ( :goffice-font(:$!gf) )
   { }
