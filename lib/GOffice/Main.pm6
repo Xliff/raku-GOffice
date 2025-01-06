@@ -18,4 +18,4 @@ class GOffice::Main {
 }
 
 INIT { GOffice::Main.init     }
-EXIT { GOffice::Main.shutdown }
+END  { GOffice::Main.shutdown }
