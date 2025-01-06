@@ -9,13 +9,17 @@ use GLib::Raw::Traits;
 use GOffice::Raw::Types;
 
 use GOffice::Canvas::Item;
+use GOffice::Style;
 
 use GLib::Roles::Implementor;
+use GOffice::Roles::StyledObject;
 
 our subset GocStyledItemAncestry is export of Mu
-  where GocStyledItem | GocItemAncestry;
+  where GocStyledItem | GOStyledObject | GocItemAncestry;
 
 class GOffice::Canvas::StyledItem is GOffice::Canvas::Item {
+  also does GOffice::Roles::StyledObject;
+
   has GocStyledItem $!gsi is implementor;
 
   submethod BUILD ( :$goffice-styled-item ) {
@@ -31,15 +35,25 @@ class GOffice::Canvas::StyledItem is GOffice::Canvas::Item {
         $_;
       }
 
+      when GOStyledObject {
+        $!gso      = $_;
+        $to-parent = cast(GocItem, $_);
+        cast(GocStyledItem, $_);
+      }
+
       default {
         $to-parent = $_;
         cast(GocStyledItem, $_);
       }
     }
+
     self.setGocItem($to-parent);
+    self.roleInit-GOStyledObject;
+    say "GSO: { +$!gso }";
   }
 
-  method GOffice::Raw::Definitions::GocStyledItem
+  method GOffice::Raw::Structs::GocStyledItem
+    is also<GocStyledItem>
   { $!gsi }
 
   multi method new (
@@ -76,7 +90,7 @@ class GOffice::Canvas::StyledItem is GOffice::Canvas::Item {
           |GOffice::Style.getTypePair
         );
       },
-      STORE => -> $, GOStyle() $val is copy {
+      STORE => -> $, $val is copy {
         $gv.object = $val;
         self.prop_set('style', $gv);
       }
