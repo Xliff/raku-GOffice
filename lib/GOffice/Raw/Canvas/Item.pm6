@@ -150,6 +150,7 @@ sub goc_item_lower_to_bottom (GocItem $item)
 sub goc_item_new (
   GocGroup $parent,
   GType    $type,
+  Str
 )
   returns GocItem
   is      native(goffice)
