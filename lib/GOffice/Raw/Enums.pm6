@@ -465,17 +465,17 @@ our enum GOStyleFillEnum is export <
 >;
 
 constant GOStyleFlag is export := guint32;
-our enum GOStyleFlagEnum is export <
-  GO_STYLE_OUTLINE
-  GO_STYLE_FILL
-  GO_STYLE_LINE
-  GO_STYLE_MARKER
-  GO_STYLE_FONT
-  GO_STYLE_TEXT_LAYOUT
-  GO_STYLE_INTERPOLATION
-  GO_STYLE_MARKER_NO_COLOR
-  GO_STYLE_ALL
->;
+our enum GOStyleFlagEnum is export (
+  GO_STYLE_OUTLINE         => 1,
+  GO_STYLE_FILL            => 1 +< 1,
+  GO_STYLE_LINE            => 1 +< 2,
+  GO_STYLE_MARKER          => 1 +< 3,
+  GO_STYLE_FONT            => 1 +< 4,
+  GO_STYLE_TEXT_LAYOUT     => 1 +< 5,
+  GO_STYLE_INTERPOLATION   => 1 +< 6,
+  GO_STYLE_MARKER_NO_COLOR => 1 +< 7,
+  GO_STYLE_ALL             => 0x1F
+);
 
 constant GoJustification is export := guint32;
 our enum GoJustificationEnum is export <
@@ -557,19 +557,19 @@ our enum GogAxisTickTypesEnum is export <
 >;
 
 constant GogAxisType is export := gint32;
-our enum GogAxisTypeEnum is export <
-  GOG_AXIS_UNKNOWN
-  GOG_AXIS_X
-  GOG_AXIS_Y
-  GOG_AXIS_Z
-  GOG_AXIS_CIRCULAR
-  GOG_AXIS_RADIAL
-  GOG_AXIS_VIRTUAL
-  GOG_AXIS_PSEUDO_3D
-  GOG_AXIS_COLOR
-  GOG_AXIS_BUBBLE
-  GOG_AXIS_TYPES
->;
+our enum GogAxisTypeEnum is export (
+  GOG_AXIS_UNKNOWN        => -1,
+  GOG_AXIS_X              => 0,
+  'GOG_AXIS_Y',
+  'GOG_AXIS_Z',
+  'GOG_AXIS_CIRCULAR',
+  'GOG_AXIS_RADIAL',
+  'GOG_AXIS_VIRTUAL',
+  'GOG_AXIS_COLOR',
+  'GOG_AXIS_BUBBLE',
+  'GOG_AXIS_TYPES'
+);
+constant GOG_AXIS_PSEUDO_3D is export = GOG_AXIS_VIRTUAL;
 
 constant GogDataType is export := guint32;
 our enum GogDataTypeEnum is export <
