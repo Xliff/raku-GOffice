@@ -1,5 +1,5 @@
 prefix= GOffice
-struct-prefix=GO
+struct-prefix=GO,Goc,Gog
 modules=Panel:Raw::Types
 backups=backup,bitbucket,google-backup,azure-backup,sourcehut
 hfile-prefix=
