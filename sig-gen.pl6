@@ -156,7 +156,7 @@ sub MAIN (
       say qq:to/METH/;
         # Is originally:
         # { .<s-sig>.join(', ') } --> { .<rt> }
-        method { .<mn> } \{
+        method { .<mn> } is g-signal \{
           self.{ .<udm> ?? "connect({ .<v> }, '{ .<mn> }')"
                         !! "connect-{ .<mn> }({ .<v> })" };
         \}
