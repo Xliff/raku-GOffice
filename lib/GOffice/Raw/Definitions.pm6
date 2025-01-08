@@ -56,11 +56,30 @@ class GogAxisMapDesc       is repr<CPointer> does GLib::Roles::Pointers is expor
 class GogAxisColorMap      is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogColorScale        is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogDataset           is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogGrid              is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogDataAllocator     is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogRenderer          is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogSeries            is repr<CPointer> does GLib::Roles::Pointers is export { }
 #class GogSeriesDesc        is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogTheme             is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogTool              is repr<CPointer> does GLib::Roles::Pointers is export { }
 #class GogView              is repr<CPointer> does GLib::Roles::Pointers is export { }
+
+class GogStyle             is repr<CPointer> does GLib::Roles::Pointers is export {
+
+  method new ( GogStyle:U: ) {
+    sub gog_style_new
+      returns GogStyle
+      is      native(goffice)
+      is      export
+    { * }
+
+    gog_style_new();
+  }
+
+}
+
+# cw: To be provided separately, with ::Class package
+# class GogObjectClass      is repr<CPointer> does GLib::Roles::Pointers is export {
 
 BEGIN re-export('GOffice::Raw::Compat');
