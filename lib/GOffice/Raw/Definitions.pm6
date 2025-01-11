@@ -59,6 +59,8 @@ class GogDataset           is repr<CPointer> does GLib::Roles::Pointers is expor
 class GogGrid              is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogDataAllocator     is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogRenderer          is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogPlotBoundInfo     is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogPlotType          is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogSeries            is repr<CPointer> does GLib::Roles::Pointers is export { }
 #class GogSeriesDesc        is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogTheme             is repr<CPointer> does GLib::Roles::Pointers is export { }
