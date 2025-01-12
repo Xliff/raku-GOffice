@@ -862,7 +862,26 @@ class GogObject is repr<CStruct> is export {
 	# unsigned invisible : 1;
 	has guint8         $.flags;
 	has gpointer       $!priv;
-};
+}
+
+class GogPlotFamily is repr<CStruct> is export {
+	has Str        $.name;
+	has Str        $.sample-image-file;
+	has gint32     $.priority;
+	has GogAxisSet $.axis-set;
+	has GHashTable $.types;
+}
+
+class GogPlotType is repr<CStruct> is export {
+	has GogPlotFamily $.family;
+	has Str           $.engine;
+	has Str           $.name;
+	has Str           $.sample-image-file;
+	has Str           $.description;
+	has gint32        $.col;
+	has gint32        $.rowl;
+	has GHashTable    $.properties;
+}
 
 class GogStyledObject is repr<CStruct> is export {
 	HAS GogObject $!base ;
