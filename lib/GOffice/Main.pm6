@@ -17,5 +17,5 @@ class GOffice::Main {
 
 }
 
-INIT { GOffice::Main.init     }
-END  { GOffice::Main.shutdown }
+INIT { GOffice::Main.init;     $GOFFICE-INIT = True  }
+END  { GOffice::Main.shutdown; $GOFFICE-INIT = False }
