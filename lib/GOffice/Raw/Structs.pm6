@@ -867,9 +867,22 @@ class GogObject is repr<CStruct> is export {
 class GogPlotFamily is repr<CStruct> is export {
 	has Str        $.name;
 	has Str        $.sample-image-file;
-	has gint32     $.priority;
-	has GogAxisSet $.axis-set;
-	has GHashTable $.types;
+	has gint32     $.priority            is rw;
+	has GogAxisSet $.axis-set            is rw;
+	has GHashTable $!types;
+
+	method types ( :$raw = False ) {
+		Proxy.new:
+			FETCH => -> $ {
+				use GLib::HashTable;
+				
+				return $!types if $raw;
+				GLib::HashTable.new($!types);
+		  },
+			STORE => -> $, GHashTable() $v {
+				self.^attributes.tail.set_value(self, $v);
+		  }
+  }
 }
 
 class GogPlotType is repr<CStruct> is export {
