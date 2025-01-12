@@ -34,6 +34,7 @@ class GODrawingAnchor      is repr<CPointer> does GLib::Roles::Pointers is expor
 class GOEditor             is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOFormat             is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOFormatDetails      is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GOGraphWidget        is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOMarker             is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOPersist            is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOPlugin             is repr<CPointer> does GLib::Roles::Pointers is export { }
