@@ -1,5 +1,6 @@
 use v6.c;
 
+use GOffice::Raw::Definitions;
 use GOffice::Raw::Main;
 
 use GLib::Roles::StaticClass;
