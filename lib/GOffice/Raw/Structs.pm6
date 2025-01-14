@@ -62,7 +62,7 @@ class GOData is repr<CStruct> is export {
 	has gint32  $.flags is rw;
 }
 
-class GODataMatrixSize is repr<CStruct> {
+class GODataMatrixSize is repr<CStruct> is export {
   has int32 $.rows;
   has int32 $.columns;
 }
@@ -875,13 +875,17 @@ class GogPlotFamily is repr<CStruct> is export {
 		Proxy.new:
 			FETCH => -> $ {
 				use GLib::HashTable;
-				
+
 				return $!types if $raw;
 				GLib::HashTable.new($!types);
 		  },
 			STORE => -> $, GHashTable() $v {
 				self.^attributes.tail.set_value(self, $v);
 		  }
+  }
+
+	method plot-types {
+		$.types.map( |*.keys );
   }
 }
 
@@ -892,7 +896,7 @@ class GogPlotType is repr<CStruct> is export {
 	has Str           $.sample-image-file;
 	has Str           $.description;
 	has gint32        $.col;
-	has gint32        $.rowl;
+	has gint32        $.row;
 	has GHashTable    $.properties;
 }
 
