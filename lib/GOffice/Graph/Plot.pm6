@@ -5,8 +5,45 @@ use GOffice::Raw::Graph::Types;
 
 use GOffice::Graph::Object;
 
+
+our subset GogPlotAncestry is export of Mu
+  where GogPlot | GObject;
+
 class GOffice::Graph::Plot is GOffice::Graph::Object {
   has GogPlot $!ggp is implementor;
+
+  submethod BUILD ( :$goffice-graph-series ) {
+    self.setGogPlot($goffice-graph-series)
+      if $goffice-graph-series
+  }
+
+  method setGogPlot (GogPlotAncestry $_) {
+    my $to-parent;
+
+    $!ggp = do {
+      when GogPlot {
+        $to-parent = cast(GObject, $_);
+        $_;
+      }
+
+      default {
+        $to-parent = $_;
+        cast(GogPlot, $_);
+      }
+    }
+    self!setObject($to-parent);
+  }
+
+  method GOffice::Raw::Definitions::GogPlot
+  { $!ggp }
+
+  multi method new ($goffice-graph-series where * ~~ GogPlotAncestry , :$ref = True) {
+    return unless $goffice-graph-series;
+
+    my $o = self.bless( :$goffice-graph-series );
+    $o.ref if $ref;
+    $o;
+  }
 
   has $!ggp-axis;
 
