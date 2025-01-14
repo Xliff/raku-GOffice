@@ -34,6 +34,11 @@ class GOActionComboPixmaps  is repr<CPointer> does GLib::Roles::Pointers is expo
 class GOCmdContext          is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GODataCacheSource     is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GODrawingAnchor       is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GODataScalarVal       is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GODataScalarStr       is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GODataVectorVal       is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GODataVectorStr       is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GODataMatrixVal       is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOEditor              is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOErrorInfo           is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GOFormat              is repr<CPointer> does GLib::Roles::Pointers is export { }
@@ -67,7 +72,6 @@ class GogGrid               is repr<CPointer> does GLib::Roles::Pointers is expo
 class GogDataAllocator      is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogRenderer           is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogPlotBoundInfo      is repr<CPointer> does GLib::Roles::Pointers is export { }
-class GogPlotType           is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogSeries             is repr<CPointer> does GLib::Roles::Pointers is export { }
 #class GogSeriesDesc         is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogTheme              is repr<CPointer> does GLib::Roles::Pointers is export { }
