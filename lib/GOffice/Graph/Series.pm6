@@ -10,10 +10,12 @@ use GLib::Roles::Object;
 
 
 our subset GogSeriesAncestry is export of Mu
-  where GogSeries | GObject;
+  where GogSeries | GogDataset | GOStyledObject | GObject;
 
 class GOffice::Graph::Series {
   also does GLib::Roles::Object;
+  also does GOffice::Roles::StyledObject;
+  also does GOffice::Roles::Graph::Dataset;
 
   has GogSeries $!ggs is implementor;
 
@@ -25,9 +27,21 @@ class GOffice::Graph::Series {
     my $to-parent;
 
     $!ggs = do {
-      when GotSeries {
+      when GogSeries {
         $to-parent = cast(GObject, $_);
         $_;
+      }
+
+      when GogDataset {
+        $!ggd = $_;
+        $to-parent = cast(GObject, $_);
+        cast(GotSeries, $_);
+      }
+
+      when GOStyledObject {
+        $!gso = $_;
+        $to-parent = cast(GObject, $_);
+        cast(GotSeries, $_);
       }
 
       default {
@@ -36,6 +50,8 @@ class GOffice::Graph::Series {
       }
     }
     self!setObject($to-parent);
+    self.roleInit-GOStyledObject;
+    self.roleInit-GogDataset;
   }
 
   method GOffice::Raw::Definitions::GogSeries
@@ -130,6 +146,26 @@ class GOffice::Graph::Series {
     );
   }
 
+  multi method add_dim is also<add-dim> (
+    @data,
+    :l(:label(:$labels)) is required
+  ) {
+    use GOffice::Data::Simple;
+
+    my $d = GOffice::Data::Vector::Str.new(@data);
+    $.set_dim(0, $d);
+  }
+
+  multi method add_dim is also<add-dim> (
+    @data,
+    :d(:$data) = True where *.so
+  ) {
+    use GOffice::Data::Simple;
+
+    my $d = GOffice::Data::Vector::Val.new(@data);
+    $.set_dim(1, $d);
+  }
+
   method get_fill_type is also<get-fill-type> {
     gog_series_get_fill_type($!ggs);
   }
@@ -222,7 +258,12 @@ class GOffice::Graph::Series {
     gog_series_map_XL_dim($!ggs, $ms_type);
   }
 
-  method num_elements is also<num-elements> {
+  method num_elements
+    is also<
+      num-elements
+      elems
+    >
+  {
     gog_series_num_elements($!ggs);
   }
 
@@ -241,7 +282,9 @@ class GOffice::Graph::Series {
   {
     my gint $d = $dim_i;
 
+    clear_error;
     gog_series_set_dim($!ggs, $d, $val, $err);
+    set_error($err);
   }
 
   method set_XL_dim (
@@ -252,6 +295,10 @@ class GOffice::Graph::Series {
     is also<set-XL-dim>
   {
     my GogMSDimType $m = $ms_type;
+
+    clear_error;
+    gog_series_set_XL_dim($!ggs, $m, $val, $err);
+    set_error($err);
   }
 
   method set_fill_type (Int() $fill_type) is also<set-fill-type> {
