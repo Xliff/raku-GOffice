@@ -10,9 +10,11 @@ use GOffice::Raw::Types;
 use GOffice::Graph::Object;
 
 our subset GogStyledObjectAncestry is export of Mu
-  where GogStyledObject | GogObjectAncestry;
+  where GogStyledObject | GOStyledObject | GogObjectAncestry;
 
 class GOffice::Graph::StyledObject is GOffice::Graph::Object {
+  also does GOffice::Roles::StyledObject;
+  
   has GogStyledObject $!ggoo is implementor;
 
   submethod BUILD ( :$goffice-styled-obj ) {
@@ -28,12 +30,19 @@ class GOffice::Graph::StyledObject is GOffice::Graph::Object {
         $_;
       }
 
+      when GOStyledObject {
+        $!gso = $_;
+        $to-parent = cast(GogStyledObject, $_);
+        cast(GogStyledObject, $_);
+      }
+
       default {
         $to-parent = $_;
         cast(GogStyledObject, $_);
       }
     }
     self.setGogObject($to-parent);
+    self.roleInit-GOStyledObject;
   }
 
   method GOffice::Raw::Definitions::GogStyledObject
