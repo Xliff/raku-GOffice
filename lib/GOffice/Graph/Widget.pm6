@@ -50,7 +50,7 @@ class GOffice::Graph::Widget is GTK::Layout {
     $o.ref if $ref;
     $o;
   }
-  multi method new ( GogGraph() $graph, *%a ) {
+  multi method new ( GogGraph() $graph = GogGraph, *%a ) {
     my $goffice-graph-widget = go_graph_widget_new($graph);
 
     my $o = $goffice-graph-widget
