@@ -6,6 +6,12 @@ use GLib::Raw::Traits;
 use GOffice::Raw::Types;
 use GOffice::Raw::Graph;
 
+use GLib::GSList;
+use GOffice::Doc;
+use GOffice::Graph::OutlinedObject;
+
+use GLib::Roles::Implementor;
+
 our subset GogGraphAncestry is export of Mu
   where GogGraph | GogOutlinedObjectAncestry;
 
@@ -51,7 +57,7 @@ class GOffice::Graph is GOffice::Graph::OutlinedObject {
 
   # Type: GODoc
   method document ( :$raw = False ) is rw  is g-property {
-    my $gv = GLib::Value.new( GO Goc GogDoc );
+    my $gv = GLib::Value.new( GOffice::Doc.get-type );
     Proxy.new(
       FETCH => sub ($) {
         self.prop_get('document', $gv);
@@ -202,10 +208,11 @@ class GOffice::Graph is GOffice::Graph::OutlinedObject {
     :$raw            = False,
     :gslist(:$glist) = False
   )
+    is static
     is also<get-supported-image-formats>
   {
     returnGSList(
-      gog_graph_get_supported_image_formats($!gg),
+      gog_graph_get_supported_image_formats(),
       $raw,
       $glist,
       |GOffice::ImageFormat.getTypePair
@@ -223,7 +230,7 @@ class GOffice::Graph is GOffice::Graph::OutlinedObject {
   method get_type is also<get-type> {
     state ($n, $t);
 
-    unstable_get_type( self.^name, &gog_graph_get_type, $n. $t );
+    unstable_get_type( self.^name, &gog_graph_get_type, $n, $t );
   }
 
   method num_cols is also<num-cols> {
@@ -246,9 +253,9 @@ class GOffice::Graph is GOffice::Graph::OutlinedObject {
   }
 
   method set_size (Num() $width, Num() $height) is also<set-size> {
-    my gdouble ($ww, $hh) = ($w, $h);
+    my gdouble ($w, $h) = ($width, $height);
 
-    gog_graph_set_size($!gg, $width, $height);
+    gog_graph_set_size($!gg, $w, $h);
   }
 
   method set_theme (GogTheme() $theme) is also<set-theme> {
@@ -311,7 +318,7 @@ class GOffice::Graph::View {
 
   method get_selection ( :$raw = False ) is also<get-selection> {
     propReturnObject(
-      gog_graph_view_get_selection($!gg),
+      gog_graph_view_get_selection($!ggv),
       $raw,
       |GOffice::Graph::View.getTypePair
     )
@@ -332,11 +339,11 @@ class GOffice::Graph::View {
   {
     my gdouble ($x, $y) = ($x_offset, $y_offset);
 
-    gog_graph_view_handle_event($!gg, $event, $x, $y);
+    gog_graph_view_handle_event($!ggv, $event, $x, $y);
   }
 
   method set_selection (GogObject() $gobj) is also<set-selection> {
-    gog_graph_view_set_selection($!gg, $gobj);
+    gog_graph_view_set_selection($!ggv, $gobj);
   }
 
 }
