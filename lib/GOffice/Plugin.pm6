@@ -236,13 +236,15 @@ class GOffice::Plugins {
     go_plugins_get_plugin_dir();
   }
 
+  constant GPLM = GOffice::Plugin::Loader::Module;
+
   multi method init (
     :$context                                           = GOCmdContext,
     :known-states(:$known_states)                       = GSList,
     :active-plugins(:$active_plugins)                   = GSList,
     :plugin-dirs(:$plugin_dirs)                         = GSList,
     :new(:activate-new-plugins(:$activate_new_plugins)) = True,
-    :default-loader(:$default_loader)                   = GOffice::Plugin::Loader.get_type
+    :default-loader(:$default_loader)                   = GPLM.get_type
   ) {
     samewith(
       $context,
@@ -263,6 +265,9 @@ class GOffice::Plugins {
   ) {
     my gboolean $a = $activate_new_plugins.so.Int;
     my GType    $d = $default_loader_type;
+
+    # cw: Next step is to write a routine to a shared lib that does this
+    #     in C
 
     go_plugins_init(
       $context,
@@ -298,16 +303,4 @@ class GOffice::Plugins {
     go_plugins_unregister_loader($id);
   }
 
-}
-
-INIT {
-  if $GOFFICE-INIT {
-    GOffice::Plugins.init if $GOFFICE-AUTO-INIT-PLUGINS;
-  }
-}
-
-END {
-  if $GOFFICE-INIT {
-    GOffice::Plugins.shutdown
-  }
 }
