@@ -67,9 +67,12 @@ class GocWidget             is repr<CPointer> does GLib::Roles::Pointers is expo
 class GogAxisMapDesc        is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogAxisColorMap       is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogColorScale         is repr<CPointer> does GLib::Roles::Pointers is export { }
-class GogDataset            is repr<CPointer> does GLib::Roles::Pointers is export { }
-class GogGrid               is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogDataAllocator      is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogDataset            is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogGraphView          is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogGrid               is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogLabel              is repr<CPointer> does GLib::Roles::Pointers is export { }
+class GogRegEqn             is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogRenderer           is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogPlotBoundInfo      is repr<CPointer> does GLib::Roles::Pointers is export { }
 class GogSeries             is repr<CPointer> does GLib::Roles::Pointers is export { }
