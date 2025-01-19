@@ -20,54 +20,54 @@ use GLib::Roles::Pointers;
 
 unit package GOffice::Raw::Structs;
 
-class GOArrow is repr<CStruct> is export {
+class GOArrow is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOArrowType $.typ is rw;
 	has gdouble     $.a   is rw;
 	has gdouble     $.b   is rw;
 	has gdouble     $.c   is rw;
 }
 
-class GOColorGroup is repr<CStruct> is export {
+class GOColorGroup is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject  $!parent ;
 	has Str      $!name   ;
 	has gpointer $!context;
 	HAS GOColor  @!history[8] is CArray;
 }
 
-class GOComboBox is repr<CStruct> is export {
+class GOComboBox is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GtkBox   $!hbox;
 	has gpointer $!priv;
 }
 
-class GOComplex is repr<CStruct> is export {
+class GOComplex is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble $!re;
 	has gdouble $!im;
 }
 
 #| Skip Struct
-class GOComplexD is repr<CStruct> is export {
+class GOComplexD is repr<CStruct> is export does GLib::Roles::Pointers {
 	has Decimal64 $!re;
 	has Decimal64 $!im;
 }
 
-class GOComplexl is repr<CStruct> is export {
+class GOComplexl is repr<CStruct> is export does GLib::Roles::Pointers {
 	has num64 $!re-a;
 	has num64 $!re-b;
 	has num64 $!im-a;
 	has num64 $!im-b;
 }
 
-class GOData is repr<CStruct> is export {
+class GOData is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject $!base ;
 	has gint32  $.flags is rw;
 }
 
-class GODataMatrixSize is repr<CStruct> is export {
+class GODataMatrixSize is repr<CStruct> is export does GLib::Roles::Pointers {
   has int32 $.rows;
   has int32 $.columns;
 }
 
-class GODataMatrix is repr<CStruct> is export {
+class GODataMatrix is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GOData           $!base   ;
 	has GODataMatrixSize $!size   ;
 	has gdouble           $!values ;
@@ -75,12 +75,12 @@ class GODataMatrix is repr<CStruct> is export {
 	has gdouble           $!maximum;
 }
 
-class GODataScalar is repr<CStruct> is export {
+class GODataScalar is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GOData $!base ;
 	has gdouble $!value;
 }
 
-class GODataVector is repr<CStruct> is export {
+class GODataVector is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GOData $!base   ;
 	has gint    $.len     is rw;
 	has gdouble $!values ;
@@ -88,11 +88,11 @@ class GODataVector is repr<CStruct> is export {
 	has gdouble $!maximum;
 }
 
-class GODateConventions is repr<CStruct> is export {
+class GODateConventions is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gboolean $!use_1904;
 }
 
-class GODoc is repr<CStruct> is export {
+class GODoc is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject        $!base                   ;
 	has Str            $!uri                    ;
 	has GsfDocMetaData $!meta_data              ;
@@ -104,17 +104,17 @@ class GODoc is repr<CStruct> is export {
 	has gpointer       $!priv                   ;
 }
 
-class GODocControl is repr<CStruct> is export {
+class GODocControl is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject $!base;
 	has GODoc   $!doc ;
 }
 
-# class GODocControlClass is repr<CStruct> is export {
+# class GODocControlClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GObjectClass $!base;
 # }
 
 #| Skip Struct
-class GOFileOpener is repr<CStruct> is export {
+class GOFileOpener is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject               $!parent            ;
 	has Str                   $!id                ;
 	has Str                   $!description       ;
@@ -126,7 +126,7 @@ class GOFileOpener is repr<CStruct> is export {
 	has GOFileOpenerOpenFunc  $!open_func         ;
 }
 
-class GOFilePermissions is repr<CStruct> is export {
+class GOFilePermissions is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gboolean $!owner_read    ;
 	has gboolean $!owner_write   ;
 	has gboolean $!owner_execute ;
@@ -138,7 +138,7 @@ class GOFilePermissions is repr<CStruct> is export {
 	has gboolean $!others_execute;
 }
 
-class GOFont is repr<CStruct> is export {
+class GOFont is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gint                  $!ref_count          ;
 	has gint                  $.font_index    is rw;
 	has PangoFontDescription  $!desc               ;
@@ -154,7 +154,7 @@ class GOFont is repr<CStruct> is export {
 
 }
 
-class GOFontMetrics is repr<CStruct> is export {
+class GOFontMetrics is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS gint      @.digit_widths[10] is CArray;
 	has gint      $.min_digit_width           ;
 	has gint      $.max_digit_width           ;
@@ -182,7 +182,7 @@ class GOFontMetrics is repr<CStruct> is export {
 	method thin-space-width { $!thin_space_width }
 }
 
-class GOGeometryOBR is repr<CStruct> is export {
+class GOGeometryOBR is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble $!x    ;
 	has gdouble $!y    ;
 	has gdouble $!w    ;
@@ -223,12 +223,12 @@ class GOProgressHelper-V is repr<CUnion> {
 }
 
 #| Skip Struct
-class GOProgressHelper is repr<CStruct> is export {
+class GOProgressHelper is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOProgressHelperType $.helper-type;
 	HAS GOProgressHelper-V   $.v;
 }
 
-class GOIOContext is repr<CStruct> is export {
+class GOIOContext is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject          $!base            ;
 	has GOCmdContext     $!impl            ;
 	has GSList           $!info            ;
@@ -243,7 +243,7 @@ class GOIOContext is repr<CStruct> is export {
 	has gboolean         $!exec_main_loop  ;
 }
 
-class GOImage is repr<CStruct> is export {
+class GOImage is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject   $!parent     ;
 	has guint8    $.data        is rw;
 	has gdouble    $!width      ;
@@ -254,7 +254,7 @@ class GOImage is repr<CStruct> is export {
 	has gsize     $!data_length;
 }
 
-class GOImageFormatInfo is repr<CStruct> is export {
+class GOImageFormatInfo is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOImageFormat $!format          ;
 	has Str          $!name            ;
 	has Str          $!desc            ;
@@ -264,20 +264,24 @@ class GOImageFormatInfo is repr<CStruct> is export {
 	has gboolean      $!alpha_support   ;
 }
 
-class GOLineDashSequence is repr<CStruct> is export {
+class GOLineDashSequence
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has gdouble $!offset   ;
 	has gint    $.n_dash    is rw;
 	has gdouble $!dash     ;
 	has gint    $.ref_count is rw;
 }
 
-class GOMimeType is repr<CStruct> is export {
+class GOMimeType is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOMimePriority $!priority           ;
 	has Str           $!component_type_name;
 	has gboolean       $!support_clipboard  ;
 }
 
-class GOOptionMenu is repr<CStruct> is export {
+class GOOptionMenu is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GtkButtonStruct $!button      ;
 	has GtkMenuShell    $!menu        ;
 	has GtkMenuItem     $!selected    ;
@@ -285,33 +289,41 @@ class GOOptionMenu is repr<CStruct> is export {
 	has gboolean        $!active      ;
 }
 
-class GOPalette is repr<CStruct> is export {
+class GOPalette is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GtkMenuStruct $!parent;
 	has gpointer      $!priv  ;
 }
 
-class GOPangoAttrSubscript is repr<CStruct> is export {
+class GOPangoAttrSubscript is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS PangoAttribute $!attr;
 	has gboolean       $!val ;
 }
 
-class GOPangoAttrSuperscript is repr<CStruct> is export {
+class GOPangoAttrSuperscript
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	HAS PangoAttribute $!attr;
 	has gboolean       $!val ;
 }
 
-class GOPathPoint is repr<CStruct> is export {
+class GOPathPoint is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble $!x;
 	has gdouble $!y;
 }
 
-class GOPattern is repr<CStruct> is export {
+class GOPattern is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOColor $!fore   ;
 	has GOColor $!back   ;
 	has gint     $.pattern is rw;
 }
 
-class GOPluginLoaderModule is repr<CStruct> is export {
+class GOPluginLoaderModule
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	HAS GObject   $!base            ;
 	has Str       $!module_file_name;
 	has GModule   $!handle          ;
@@ -319,7 +331,7 @@ class GOPluginLoaderModule is repr<CStruct> is export {
 	has gpointer  $!plugin_shutdown ; #= (GOPlugin *plugin, GOCmdContext *cc)
 }
 
-class GOPluginService is repr<CStruct> is export {
+class GOPluginService is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject  $!g_object         ;
 	has Str     $!id               ;
 	has GOPlugin $!plugin           ;
@@ -329,24 +341,32 @@ class GOPluginService is repr<CStruct> is export {
 	has Str     $!saved_description;
 }
 
-class GOPluginServiceGObjectLoader is repr<CStruct> is export {
+class GOPluginServiceGObjectLoader
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	HAS GOPluginService $!plugin_service;
 }
 
-# class GOPluginServiceGObjectLoaderClass is repr<CStruct> is export {
+# class GOPluginServiceGObjectLoaderClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GOPluginServiceClass $!plugin_service_class;
 # 	has GHashTable           $!pending             ;
 # }
 
-class GOPluginServiceSimple is repr<CStruct> is export {
+class GOPluginServiceSimple
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	HAS GOPluginService $!plugin_service;
 }
 
-# class GOPluginServiceSimpleClass is repr<CStruct> is export {
+# class GOPluginServiceSimpleClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GOPluginServiceClass $!plugin_service_class;
 # }
 
-class GOPoint is repr<CStruct> is export {
+class GOPoint is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GODistance $.x is rw;
 	has GODistance $.y is rw;
 
@@ -355,7 +375,7 @@ class GOPoint is repr<CStruct> is export {
 	}
 }
 
-class GocPoint is repr<CStruct> is export {
+class GocPoint is repr<CStruct> is export does GLib::Roles::Pointers {
   has gdouble $.x is rw;
 	has gdouble $.y is rw;
 
@@ -364,7 +384,7 @@ class GocPoint is repr<CStruct> is export {
 	}
 }
 
-class GocPoints is repr<CStruct> is export {
+class GocPoints is repr<CStruct> is export does GLib::Roles::Pointers {
 	has guint    $!n;
 	has guint    $!refs;
 	has gpointer $!points; #= [GocPoint]
@@ -379,24 +399,24 @@ class GocPoints is repr<CStruct> is export {
 }
 
 
-class GOProgressRange is repr<CStruct> is export {
+class GOProgressRange is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble $.min is rw;
 	has gdouble $.max is rw;
 }
 
-class GOQuad is repr<CStruct> is export {
+class GOQuad is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble $.h is rw;
 	has gdouble $.l is rw;
 };
 
 #| Skip Struct
-class GOQuadD is repr<CStruct> is export {
+class GOQuadD is repr<CStruct> is export does GLib::Roles::Pointers {
 	has Decimal64 $.h is rw;
 	has Decimal64 $.l is rw;
 }
 
 #| Skip Struct
-class GOQuadMatrixD is repr<CStruct> is export {
+class GOQuadMatrixD is repr<CStruct> is export does GLib::Roles::Pointers {
 	has CArray[gpointer] $!data       ;  # [[GOQuad]]
 	has gint             $.m     is rw;
 	has gint             $.n     is rw;
@@ -417,7 +437,7 @@ class GOQuadMatrixD is repr<CStruct> is export {
   }
 }
 
-class GOQuadMatrix is repr<CStruct> is export {
+class GOQuadMatrix is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOQuad $.data;
 	has gint   $.m     is rw;
 	has gint   $.n     is rw;
@@ -438,31 +458,31 @@ class GOQuadMatrix is repr<CStruct> is export {
   }
 }
 
-# class GOQuadMatrixl is repr<CStruct> is export {
+# class GOQuadMatrixl is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GOQuadl $!data;
 # 	has gint     $.m    is rw;
 # 	has gint     $.n    is rw;
 # }
 
-class GORect is repr<CStruct> is export {
+class GORect is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GODistance $!top   ;
 	has GODistance $!left  ;
 	has GODistance $!bottom;
 	has GODistance $!right ;
 }
 
-class GORegexp is repr<CStruct> is export {
+class GORegexp is repr<CStruct> is export does GLib::Roles::Pointers {
 	has size_t   $!re_nsub;
 	has gboolean $!nosub  ;
 	has gpointer $!ppcre  ;
 }
 
-class GORegmatch is repr<CStruct> is export {
+class GORegmatch is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GORegoff $!rm_so;
 	has GORegoff $!rm_eo;
 }
 
-class GOSearchReplace is repr<CStruct> is export {
+class GOSearchReplace is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject  $!base         ;
 	has Str     $!search_text  ;
 	has Str     $!replace_text ;
@@ -474,27 +494,27 @@ class GOSearchReplace is repr<CStruct> is export {
 	has gboolean $!plain_replace;
 }
 
-# class GOSearchReplaceClass is repr<CStruct> is export {
+# class GOSearchReplaceClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GObjectClass $!g_object_class;
 # }
 
-class GOSelector is repr<CStruct> is export {
+class GOSelector is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GtkBox   $!parent;
 	has gpointer $!priv  ;
 }
 
 #| Skip Struct
-class GOService is repr<CStruct> is export {
+class GOService is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject  $!base  ;
 	has GOPlugin $!plugin;
 }
 
 #| Skip Struct
-class GOServiceSimple is repr<CStruct> is export {
+class GOServiceSimple is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GOService $!base;
 }
 
-class GOStyleLine is repr<CStruct> is export {
+class GOStyleLine is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble                  $!width      ;
 	has GOLineDashType           $!dash_type  ;
 	has gboolean                 $!auto_dash  ;
@@ -537,7 +557,7 @@ class GOStyleInnerFill is repr<CStruct> {
 	has guint64                  $!why;     #= Needs padding for some unknown reason.
 }
 
-class GOStyleMark is repr<CStruct> is export {
+class GOStyleMark is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOMarker $!mark              ;
 	has gboolean $!auto_shape        ;
 	has gboolean $!auto_outline_color;
@@ -565,7 +585,7 @@ class GOStyleTextLayout is repr<CStruct> {
   has gboolean  $.auto_angle;
 }
 
-class GOStyle is repr<CStruct> is export {
+class GOStyle is repr<CStruct> is export does GLib::Roles::Pointers {
   HAS GObject           $.base;
   has GOStyleFlag       $.interesting_fields is rw;
   has GOStyleFlag       $.disable_theming    is rw;
@@ -581,11 +601,11 @@ class GOStyle is repr<CStruct> is export {
 	method text-layout        is rw { $.text_layout        }
 }
 
-class GOUndo is repr<CStruct> is export {
+class GOUndo is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject $!base;
 }
 
-class GOUndoBinary is repr<CStruct> is export {
+class GOUndoBinary is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GOUndo           $!base    ;
 	has gpointer         $!a       ;
 	has gpointer         $!b       ;
@@ -594,37 +614,37 @@ class GOUndoBinary is repr<CStruct> is export {
 	has GFreeFunc        $!disposeb;
 }
 
-# class GOUndoBinaryClass is repr<CStruct> is export {
+# class GOUndoBinaryClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GOUndoClass $!base;
 # }
 
-class GOUndoGroup is repr<CStruct> is export {
+class GOUndoGroup is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GOUndo    $!base ;
 	has GPtrArray $!undos;
 }
 
-# class GOUndoGroupClass is repr<CStruct> is export {
+# class GOUndoGroupClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GOUndoClass $!base;
 # }
 
-class GOUndoUnary is repr<CStruct> is export {
+class GOUndoUnary is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GOUndo          $!base    ;
 	has gpointer        $!a       ;
 	has GOUndoUnaryFunc $!undo    ;
 	has GFreeFunc       $!disposea;
 }
 
-# class GOUndoUnaryClass is repr<CStruct> is export {
+# class GOUndoUnaryClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	has GOUndoClass $!base;
 # }
 
-class GoView is repr<CStruct> is export {
+class GoView is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GObject $!base;
 }
 
-class GocItem is repr<CStruct> is export { ... }
+class GocItem is repr<CStruct> is export does GLib::Roles::Pointers { ... }
 
-class GocCanvas is repr<CStruct> is export {
+class GocCanvas is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GtkLayout    $!base           ;
 	has gdouble      $!scroll_x1      ;
 	has gdouble      $!scroll_y1      ;
@@ -658,14 +678,14 @@ class GocItem {
 	has gpointer                $!priv         ;
 }
 
-class GocStyledItem is repr<CStruct> is export {
+class GocStyledItem is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocItem  $!base            ;
 	has GOStyle  $!style           ;
 	has gboolean $!scale_line_width;
 	has gpointer $!priv            ;
 }
 
-class GocArc is repr<CStruct> is export {
+class GocArc is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base       ;
 	has gdouble        $!rotation   ;
 	has gdouble        $!xc         ;
@@ -680,7 +700,7 @@ class GocArc is repr<CStruct> is export {
 	has gpointer       $!priv       ;
 }
 
-class GocCircle is repr<CStruct> is export {
+class GocCircle is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base  ;
 	has gdouble        $!x     ;
 	has gdouble        $!y     ;
@@ -688,7 +708,7 @@ class GocCircle is repr<CStruct> is export {
 	has gpointer      $!priv  ;
 }
 
-class GocEllipse is repr<CStruct> is export {
+class GocEllipse is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base    ;
 	has gdouble        $!rotation;
 	has gdouble        $!x       ;
@@ -698,7 +718,7 @@ class GocEllipse is repr<CStruct> is export {
 	has gpointer      $!priv    ;
 }
 
-class GocImage is repr<CStruct> is export {
+class GocImage is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocItem  $!base       ;
 	has gdouble   $!x          ;
 	has gdouble   $!y          ;
@@ -713,7 +733,7 @@ class GocImage is repr<CStruct> is export {
 	has gpointer $!priv       ;
 }
 
-class GocIntArray is repr<CStruct> is export {
+class GocIntArray is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gint         $.refs is rw;
 	has gint         $.n    is rw;
 	has CArray[gint] $!vals      ;
@@ -723,7 +743,7 @@ class GocIntArray is repr<CStruct> is export {
 	}
 }
 
-class GocLine is repr<CStruct> is export {
+class GocLine is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base       ;
 	has gdouble        $!startx     ;
 	has gdouble        $!starty     ;
@@ -734,7 +754,7 @@ class GocLine is repr<CStruct> is export {
 	has gpointer      $!priv       ;
 }
 
-class GocPath is repr<CStruct> is export {
+class GocPath is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base     ;
 	has gdouble        $!rotation ;
 	has gdouble        $!x        ;
@@ -745,7 +765,7 @@ class GocPath is repr<CStruct> is export {
 	has gpointer      $!priv     ;
 }
 
-class GocPixbuf is repr<CStruct> is export {
+class GocPixbuf is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocItem   $!base    ;
 	has gdouble    $!x       ;
 	has gdouble    $!y       ;
@@ -756,7 +776,7 @@ class GocPixbuf is repr<CStruct> is export {
 	has gpointer  $!priv    ;
 }
 
-class GocPolygon is repr<CStruct> is export {
+class GocPolygon is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base      ;
 	has GocPoint      $.points     is rw;
 	has gint           $.nb_points  is rw;
@@ -767,7 +787,7 @@ class GocPolygon is repr<CStruct> is export {
 	has gpointer      $!priv      ;
 }
 
-class GocPolyline is repr<CStruct> is export {
+class GocPolyline is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base      ;
 	has GocPoint      $.points     is rw;
 	has gint           $.nb_points  is rw;
@@ -775,14 +795,14 @@ class GocPolyline is repr<CStruct> is export {
 	has gpointer      $!priv      ;
 }
 
-class GocRect is repr<CStruct> is export {
+class GocRect is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble $!x     ;
 	has gdouble $!y     ;
 	has gdouble $!width ;
 	has gdouble $!height;
 }
 
-class GocRectangle is repr<CStruct> is export {
+class GocRectangle is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GocStyledItem $!base    ;
 	has gdouble        $!rotation;
 	has gdouble        $!x       ;
@@ -812,7 +832,11 @@ class GocText is repr<CStruct> does GLib::Roles::Pointers is export {
 	has gpointer      $!priv       ;
 }
 
-class GogViewAllocation is repr<CStruct> is export {
+class GogViewAllocation
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has gdouble $.w is rw;
 	has gdouble $.h is rw;
 	has gdouble $.x is rw;
@@ -827,7 +851,7 @@ class GogObjectRoleUser is repr<CUnion> {
 	has gpointer $.p;
 }
 
-class GogObjectRole is repr<CStruct> is export {
+class GogObjectRole is repr<CStruct> is export does GLib::Roles::Pointers {
 	has Str                 $.id;
 	has Str                 $.is_a_typename;
 	has guint               $.priority;
@@ -845,7 +869,7 @@ class GogObjectRole is repr<CStruct> is export {
 };
 
 
-class GogObject is repr<CStruct> is export {
+class GogObject is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject		        $.base;
 	has guint	            $.id;
 	has Str		            $.user_name;
@@ -864,7 +888,7 @@ class GogObject is repr<CStruct> is export {
 	has gpointer       $!priv;
 }
 
-class GogPlotFamily is repr<CStruct> is export {
+class GogPlotFamily is repr<CStruct> is export does GLib::Roles::Pointers {
 	has Str        $.name;
 	has Str        $.sample-image-file;
 	has gint32     $.priority            is rw;
@@ -884,12 +908,16 @@ class GogPlotFamily is repr<CStruct> is export {
 		  }
   }
 
-	method plot-types {
+	method all-plot-types {
+		$.types.pairs( ::('GogPlotType') ).map({ Pair.new( .key, .value ) });
+	}
+
+	method plot-type-names {
 		$.types.map( |*.keys );
   }
 }
 
-class GogPlotType is repr<CStruct> is export {
+class GogPlotType is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GogPlotFamily $.family;
 	has Str           $.engine;
 	has Str           $.name;
@@ -900,21 +928,21 @@ class GogPlotType is repr<CStruct> is export {
 	has GHashTable    $.properties;
 }
 
-class GogStyledObject is repr<CStruct> is export {
+class GogStyledObject is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogObject $!base ;
 	has GOStyle   $!style;
 }
 
-class GogOutlinedObject is repr<CStruct> is export {
+class GogOutlinedObject is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogStyledObject $!base       ;
 	has gdouble          $!padding_pts;
 }
 
-class GogTrendLine is repr<CStruct> is export {
+class GogTrendLine is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogStyledObject $!base;
 }
 
-class GogChart is repr<CStruct> is export {
+class GogChart is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogOutlinedObject $!base                      ;
 	has GSList            $!plots                     ;
 	has gint              $.full_cardinality     is rw;
@@ -933,30 +961,37 @@ class GogChart is repr<CStruct> is export {
 	has gboolean          $.is_plot_area_manual       ;
 }
 
-class GogDatasetElement is repr<CStruct> is export {
+class GogDatasetElement is repr<CStruct> is export does GLib::Roles::Pointers {
   has GOData     $.data;
   has GogDataset $.set;
   has gint       $.dim_i;
   has gulong     $.handler;
 }
 
-class GogAxisTick is repr<CStruct> is export {
+class GogAxisTick is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble          $!position;
 	has GogAxisTickTypes $!type    ;
 	has GOString         $!str     ;
 }
 
 #| Skip Struct
-class GogAxisTickProperties is repr<CStruct> is export {
+class GogAxisTickProperties
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
   has gboolean $.tick_in  is rw;
 	has gboolean $.tick_out is rw;
   has gint     $.size_pts is rw;
 }
 
-class GogAxis is repr<CStruct> is export does StructActualName['_GogAxis']
+class GogAxis
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers does StructActualName['_GogAxis']
 { ... }
 
-class GogSeriesDimDesc is repr<CStruct> is export {
+class GogSeriesDimDesc is repr<CStruct> is export does GLib::Roles::Pointers {
   has Str               $.name;
   has GogSeriesPriority $.priority;
   has gboolean          $.is_shared;
@@ -964,18 +999,18 @@ class GogSeriesDimDesc is repr<CStruct> is export {
   has GogMSDimType      $.ms_type;
 }
 
-class GogSeriesDesc is repr<CStruct> is export {
+class GogSeriesDesc is repr<CStruct> is export does GLib::Roles::Pointers {
 	has guint32          $.style_fields;
 	has guint32          $.num-dim;
   has GogSeriesDimDesc $.dim;
 }
 
-class GogPlotDesc is repr<CStruct> is export {
+class GogPlotDesc is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gint          $.num_series_max is rw;
 	HAS GogSeriesDesc $.dim                 ;
 }
 
-class GogPlot is repr<CStruct> is export {
+class GogPlot is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogObject             $.base                           ;
 	has GSList                $.series                         ;
 	has guint32               $.full_cardinality               ;
@@ -991,7 +1026,7 @@ class GogPlot is repr<CStruct> is export {
 	HAS GogPlotDesc           $.desc                           ;
 }
 
-class GogAxisBase is repr<CStruct> is export {
+class GogAxisBase is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogStyledObject       $!base              ;
 	has GogChart              $!chart             ;
 	has GogAxis               $!axis              ;
@@ -1043,14 +1078,14 @@ class GogAxis {
   has gdouble           $.display_factor                                 ;
 }
 
-class GOFormatCurrency is repr<CStruct> is export {
+class GOFormatCurrency is repr<CStruct> is export does GLib::Roles::Pointers {
   has Str      $.symbol           ;
   has Str      $.description      ;
   has gboolean $.precedes    is rw;
   has gboolean $.has_space   is rw;
 }
 
-class GogView is repr<CStruct> is export {
+class GogView is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject           $.base;
 	has GogObject         $.model;
 	has GogRenderer       $.renderer;
@@ -1068,7 +1103,7 @@ class GogView is repr<CStruct> is export {
 	has gpointer          $!priv;
 }
 
-class GogAxisBaseView is repr<CStruct> is export {
+class GogAxisBaseView is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogView $!base   ;
 	has gdouble  $!x_start;
 	has gdouble  $!y_start;
@@ -1076,7 +1111,11 @@ class GogAxisBaseView is repr<CStruct> is export {
 	has gdouble  $!y_stop ;
 }
 
-class GogChartMapPolarData is repr<CStruct> is export {
+class GogChartMapPolarData
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has gdouble $!cx ;
 	has gdouble $!cy ;
 	has gdouble $!rx ;
@@ -1085,13 +1124,17 @@ class GogChartMapPolarData is repr<CStruct> is export {
 	has gdouble $!th1;
 }
 
-class GogSeriesLabelElt is repr<CStruct> is export {
+class GogSeriesLabelElt
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has GOString  $!str       ;
 	has gint      $.legend_pos is rw;
 	has GogObject $!point     ;
 }
 
-class GogDataLabel is repr<CStruct> is export {
+class GogDataLabel is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogOutlinedObject  $!base                       ;
 	has gint               $.index            is rw     ;
 	has GogSeriesLabelsPos $!position                   ;
@@ -1105,7 +1148,7 @@ class GogDataLabel is repr<CStruct> is export {
 	has gboolean           $!supports_percent           ;
 }
 
-class GogErrorBar is repr<CStruct> is export {
+class GogErrorBar is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GObject            $!base         ;
 	has GogErrorBarType    $!type         ;
 	has GogSeries          $!series       ;
@@ -1116,7 +1159,7 @@ class GogErrorBar is repr<CStruct> is export {
 	has GOStyle            $!style        ;
 }
 
-class GogGraph is repr<CStruct> is export {
+class GogGraph is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogOutlinedObject $!base        ;
 	has GogTheme          $!theme       ;
 	has GSList            $!charts      ;
@@ -1130,15 +1173,15 @@ class GogGraph is repr<CStruct> is export {
 	has GODoc             $!doc         ;
 }
 
-class GogOutlinedView is repr<CStruct> is export {
+class GogOutlinedView is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogView $!base;
 }
 
-class GogPlotView is repr<CStruct> is export {
+class GogPlotView is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogView $!base;
 }
 
-class GogRegCurve is repr<CStruct> is export {
+class GogRegCurve is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogTrendLine             $!base          ;
 	has gboolean                 $!weighted      ;
 	has GogDatasetElement        $!bounds        ;
@@ -1151,12 +1194,12 @@ class GogRegCurve is repr<CStruct> is export {
 	has gpointer                 $!priv          ;
 }
 
-class GogSeriesElement is repr<CStruct> is export {
+class GogSeriesElement is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogStyledObject $.base       ;
 	has gint            $.index is rw;
 }
 
-class GogSeriesLabels is repr<CStruct> is export {
+class GogSeriesLabels is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogOutlinedObject  $.base                      ;
 	has GogSeriesLabelsPos $.position                  ;
 	has GogSeriesLabelsPos $.default_pos               ;
@@ -1171,13 +1214,13 @@ class GogSeriesLabels is repr<CStruct> is export {
 	has gboolean           $.supports_percent          ;
 }
 
-# class GogSmoothedCurveClass is repr<CStruct> is export {
+# class GogSmoothedCurveClass is repr<CStruct> is export does GLib::Roles::Pointers {
 # 	HAS GogTrendLineClass $!base   ;
 # 	has gint               $.max_dim is rw;
 # }
 
 
-class GogText is repr<CStruct> is export {
+class GogText is repr<CStruct> is export does GLib::Roles::Pointers {
 	HAS GogOutlinedObject $!base        ;
 	has gboolean          $!allow_markup;
 	has gboolean          $!rotate_frame;
@@ -1185,7 +1228,7 @@ class GogText is repr<CStruct> is export {
 	has gboolean          $!allow_wrap  ;
 }
 
-class GogToolAction is repr<CStruct> is export {
+class GogToolAction is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble  $.start_x        ;
 	has gdouble  $.start_y        ;
 	has GogView  $.view           ;
@@ -1194,39 +1237,47 @@ class GogToolAction is repr<CStruct> is export {
 	has gint     $.ref_count is rw;
 }
 
-class GogTrendLineType is repr<CStruct> is export {
+class GogTrendLineType is repr<CStruct> is export does GLib::Roles::Pointers {
 	has Str        $.engine     ;
 	has Str        $.name       ;
 	has Str        $.description;
 	has GHashTable $.properties ;
 }
 
-class GogViewPadding is repr<CStruct> is export {
+class GogViewPadding is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble $.swr is rw;
 	has gdouble $.shb is rw;
 	has gdouble $.swl is rw;
 	has gdouble $.sht is rw;
 }
 
-class GogViewRequisition is repr<CStruct> is export {
+class GogViewRequisition
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has gdouble $.w is rw;
 	has gdouble $.h is rw;
 }
 
-class coords is repr<CStruct> is export {
+class coords is repr<CStruct> is export does GLib::Roles::Pointers {
 	has guint  $.timer_id is rw;
 	has gdouble $!x       ;
 	has gdouble $!y       ;
 }
 
-class count is repr<CStruct> is export {
+class count is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gint $.total   is rw;
 	has gint $.last    is rw;
 	has gint $.current is rw;
 	has gint $.step    is rw;
 }
 
-class go_regression_stat_t is repr<CStruct> is export {
+class go_regression_stat_t
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has gdouble $!se       ;
 	has gdouble $!t        ;
 	has gdouble $!sqr_r    ;
@@ -1247,7 +1298,11 @@ class go_regression_stat_t is repr<CStruct> is export {
 	has gint    $.ref_count is rw;
 }
 
-class go_regression_stat_tD is repr<CStruct> is export {
+class go_regression_stat_tD
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has Decimal64 $!se       ;
 	has Decimal64 $!t        ;
 	has Decimal64 $!sqr_r    ;
@@ -1268,7 +1323,11 @@ class go_regression_stat_tD is repr<CStruct> is export {
 	has gint        $.ref_count is rw;
 }
 
-class go_regression_stat_tl is repr<CStruct> is export {
+class go_regression_stat_tl
+	is   repr<CStruct>
+	is   export
+	does GLib::Roles::Pointers
+{
 	has gdouble $!se       ;
 	has gdouble $!t        ;
 	has gdouble $!sqr_r    ;
@@ -1289,35 +1348,35 @@ class go_regression_stat_tl is repr<CStruct> is export {
 	has gint    $.ref_count is rw;
 }
 
-class gradient is repr<CStruct> is export {
+class gradient is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOGradientDirection $!dir            ;
 	has gdouble              $!brightness     ;
 	has gboolean            $!auto_dir       ;
 	has gboolean            $!auto_brightness;
 }
 
-class image is repr<CStruct> is export {
+class image is repr<CStruct> is export does GLib::Roles::Pointers {
 	has GOImageType $!type ;
 	has GOImage     $!image;
 }
 
-class mem is repr<CStruct> is export {
+class mem is repr<CStruct> is export does GLib::Roles::Pointers {
 	has Str  $!start;
 	has gint $.size  is rw;
 }
 
-class text_layout is repr<CStruct> is export {
+class text_layout is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gdouble   $!angle     ;
 	has gboolean $!auto_angle;
 }
 
-class value is repr<CStruct> is export {
+class value is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gint $.total is rw;
 	has gint $.last  is rw;
 	has gint $.step  is rw;
 }
 
-class workbook is repr<CStruct> is export {
+class workbook is repr<CStruct> is export does GLib::Roles::Pointers {
 	has gint $.n_elements is rw;
 	has gint $.last       is rw;
 	has gint $.current    is rw;
