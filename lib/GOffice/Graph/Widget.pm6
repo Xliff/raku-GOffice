@@ -7,6 +7,8 @@ use GOffice::Raw::Types;
 use GOffice::Raw::Graph::Widget;
 
 use GTK::Layout;
+use GOffice::Graph;
+use GOffice::Graph::Chart;
 
 our subset GOGraphWidgetAncestry is export of Mu
   where GOGraphWidget | GtkLayoutAncestry;
@@ -38,6 +40,9 @@ class GOffice::Graph::Widget is GTK::Layout {
   method GOffice::Raw::Definitions::GOGraphWidget
     is also<GOGraphWidget>
   { $!ggw }
+
+  proto method new (|)
+  { * }
 
   multi method new (
     $goffice-graph-widget where * ~~ GOGraphWidgetAncestry ,
