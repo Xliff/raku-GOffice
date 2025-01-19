@@ -1,5 +1,7 @@
 use v6.c;
 
+use Method::Also;
+
 use NativeCall;
 
 use GOffice::Raw::Types;
@@ -65,7 +67,7 @@ class GOffice::Data::Matrix::Val is GOffice::Data::Matrix {
     $goffice-matrix-val ?? self.bless( :$goffice-matrix-val ) !! Nil;
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &go_data_matrix_val_get_type, $n, $t );
@@ -125,13 +127,13 @@ class GOffice::Data::Scalar::String is GOffice::Data::Scalar {
     $goffice-scalar-str ?? self.bless( :$goffice-scalar-str ) !! Nil;
   }
 
-  method new_copy (Str() $str, :$raw = False ) {
-    my $goffice-scalar-str = go_data_scalar_str_new_copy($str),
+  method new_copy (Str() $str, :$raw = False ) is also<new-copy> {
+    my $goffice-scalar-str = go_data_scalar_str_new_copy($str);
 
     $goffice-scalar-str ?? self.bless( :$goffice-scalar-str ) !! Nil;
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &go_data_scalar_str_get_type, $n, $t );
@@ -140,12 +142,17 @@ class GOffice::Data::Scalar::String is GOffice::Data::Scalar {
   method set_str (
     Str()  $text,
     Int() :free(:$needs_free) = 0
-  ) {
+  )
+    is also<set-str>
+  {
     my gboolean $n = $needs_free.so.Int;
 
     go_data_scalar_str_set_str($!gdss, $text, $n);
   }
 }
+
+class GOffice::Data::Scalar::Str is GOffice::Data::Scalar::String
+{ }
 
 our subset GODataScalarValAncestry is export of Mu
   where GODataScalarVal | GODataScalarAncestry;
@@ -194,7 +201,7 @@ class GOffice::Data::Scalar::Val is GOffice::Data::Scalar {
     $goffice-scalar-val ?? self.bless( :$goffice-scalar-val ) !! Nil;
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &go_data_scalar_val_get_type, $n, $t );
@@ -246,7 +253,7 @@ class GOffice::Data::Vector::Str is GOffice::Data::Vector {
 
 
   multi method new (@strs) {
-    samewith( ArrayToCArray(Str, @strs), @strs.elem );
+    samewith( ArrayToCArray(Str, @strs), @strs.elems );
   }
   multi method new (
     CArray[Str] $str,
@@ -261,6 +268,7 @@ class GOffice::Data::Vector::Str is GOffice::Data::Vector {
   }
 
   proto method new_copy (|)
+    is also<new-copy>
   { * }
 
   multi method new_copy (@strs) {
@@ -272,7 +280,7 @@ class GOffice::Data::Vector::Str is GOffice::Data::Vector {
     $goffice-vector-str ?? self.bless( :$goffice-vector-str ) !! Nil;
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &go_data_vector_str_get_type, $n, $t );
@@ -282,11 +290,13 @@ class GOffice::Data::Vector::Str is GOffice::Data::Vector {
              &func,
     gpointer $data   = gpointer,
              &notify = Callable
-  ) {
+  )
+    is also<set-translate-func>
+  {
     go_data_vector_str_set_translate_func($!gdvs, &func, $data, &notify);
   }
 
-  method set_translation_domain (Str() $domain) {
+  method set_translation_domain (Str() $domain) is also<set-translation-domain> {
     go_data_vector_str_set_translation_domain($!gdvs, $domain);
   }
 
@@ -350,6 +360,7 @@ class GOffice::Data::Vector::Val is GOffice::Data::Vector {
   }
 
   proto method new_copy (|)
+    is also<new-copy>
   { * }
 
   multi method new_copy (@vals) {
@@ -361,7 +372,7 @@ class GOffice::Data::Vector::Val is GOffice::Data::Vector {
     $goffice-vector-val ?? self.bless( :$goffice-vector-val ) !! Nil;
   }
 
-  method get_type {
+  method get_type is also<get-type> {
     state ($n, $t);
 
     unstable_get_type( self.^name, &go_data_vector_val_get_type, $n, $t );
