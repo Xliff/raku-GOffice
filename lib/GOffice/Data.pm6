@@ -37,7 +37,7 @@ class GOffice::Data {
     self!setObject($to-parent);
   }
 
-  method GOffice::Raw::Definitions::GOData
+  method GOffice::Raw::Structs::GOData
     is also<GOData>
   { $!gd }
 
