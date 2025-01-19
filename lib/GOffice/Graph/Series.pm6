@@ -1,13 +1,17 @@
 use v6.c;
 
+use NativeCall;
 use Method::Also;
 
 use GOffice::Raw::Types;
-use GOffice::Raw::Graph::Plot;
+use GOffice::Raw::Graph::Series;
+
+use GLib::GList;
 
 use GLib::Roles::Implementor;
 use GLib::Roles::Object;
-
+use GOffice::Roles::StyledObject;
+use GOffice::Roles::Graph::Dataset;
 
 our subset GogSeriesAncestry is export of Mu
   where GogSeries | GogDataset | GOStyledObject | GObject;
@@ -20,10 +24,10 @@ class GOffice::Graph::Series {
   has GogSeries $!ggs is implementor;
 
   submethod BUILD ( :$goffice-graph-series ) {
-    self.setGotSeries($goffice-graph-series) if $goffice-graph-series
+    self.setGogSeries($goffice-graph-series) if $goffice-graph-series
   }
 
-  method setGotSeries (GotSeriesAncestry $_) {
+  method setGogSeries (GogSeriesAncestry $_) {
     my $to-parent;
 
     $!ggs = do {
@@ -35,18 +39,18 @@ class GOffice::Graph::Series {
       when GogDataset {
         $!ggd = $_;
         $to-parent = cast(GObject, $_);
-        cast(GotSeries, $_);
+        cast(GogSeries, $_);
       }
 
       when GOStyledObject {
         $!gso = $_;
         $to-parent = cast(GObject, $_);
-        cast(GotSeries, $_);
+        cast(GogSeries, $_);
       }
 
       default {
         $to-parent = $_;
-        cast(GotSeries, $_);
+        cast(GogSeries, $_);
       }
     }
     self!setObject($to-parent);
@@ -59,7 +63,7 @@ class GOffice::Graph::Series {
   { $!ggs }
 
   multi method new (
-    $goffice-graph-series where * ~~ GotSeriesAncestry ,
+    $goffice-graph-series where * ~~ GogSeriesAncestry ,
 
     :$ref = True
   ) {
@@ -86,8 +90,12 @@ class GOffice::Graph::Series {
     );
   }
 
+  proto method has-legend (|)
+    is also<has_legend>
+  { * }
+
   # Type: boolean
-  method has-legend is rw  is g-property {
+  multi method has-legend is rw  is g-property {
     my $gv = GLib::Value.new( G_TYPE_BOOLEAN );
     Proxy.new(
       FETCH => sub ($) {
@@ -146,26 +154,6 @@ class GOffice::Graph::Series {
     );
   }
 
-  multi method add_dim is also<add-dim> (
-    @data,
-    :l(:label(:$labels)) is required
-  ) {
-    use GOffice::Data::Simple;
-
-    my $d = GOffice::Data::Vector::Str.new(@data);
-    $.set_dim(0, $d);
-  }
-
-  multi method add_dim is also<add-dim> (
-    @data,
-    :d(:$data) = True where *.so
-  ) {
-    use GOffice::Data::Simple;
-
-    my $d = GOffice::Data::Vector::Val.new(@data);
-    $.set_dim(1, $d);
-  }
-
   method get_fill_type is also<get-fill-type> {
     gog_series_get_fill_type($!ggs);
   }
@@ -215,21 +203,45 @@ class GOffice::Graph::Series {
     unstable_get_type( self.^name, &gog_series_get_type, $n, $t );
   }
 
-  method get_xy_data ($x is rw, $y is rw) is also<get-xy-data> {
-    my gdouble ($xx, $yy) = 0e0 xx 2;
+  proto method get_xy_data (|)
+  { * }
 
-    gog_series_get_xy_data($!ggs, $xx, $yy);
+  multi method get_xy_data {
+    samewith(
+      newCArray( CArray[gdouble] ),
+      newCArray( CArray[gdouble] ),
+    )
+  }
+  multi method get_xy_data (
+    CArray[CArray[gdouble]] $x,
+    CArray[CArray[gdouble]] $y
+  )
+    is also<get-xy-data>
+  {
+    my gdouble ($xx, $yy) = 0e0 xx 2;
+    my gint     $n        = gog_series_get_xy_data($!ggs, $x, $y);
+
+    ($xx, $yy) = ($x, $y).map({
+      CArrayToArray( ppr($_), size => $n )
+    });
+
+    [Z]($xx, $yy);
   }
 
   proto method get_xyz_data (|)
   { * }
 
   multi method get_xyz_data {
+    samewith(
+      newCArray( CArray[gdouble] ),
+      newCArray( CArray[gdouble] ),
+      newCArray( CArray[gdouble] ),
+    )
   }
   multi method get_xyz_data (
-    CArray[CArray[gdouble]]  $x      is rw,
-    CArray[CArray[gdouble]]  $y      is rw,
-    CArray[CArray[gdouble]]  $z      is rw,
+    CArray[CArray[gdouble]]  $x,
+    CArray[CArray[gdouble]]  $y,
+    CArray[CArray[gdouble]]  $z,
                             :$single        = False
   )
     is also<get-xyz-data>
@@ -239,14 +251,14 @@ class GOffice::Graph::Series {
 
     return $n unless $single;
 
-    my ($xx, $yy, $zz) = ($x, $y, $z).map({
-      CArrayToArray( ppr(*), size => $n )
+    ($xx, $yy, $zz) = ($x, $y, $z).map({
+      CArrayToArray( ppr($_), size => $n )
     });
 
     [Z]($xx, $yy, $zz);
   }
 
-  method has_legend is also<has-legend> {
+  multi method has-legend ( :m(:$method) is required where *.so ) {
     so gog_series_has_legend($!ggs);
   }
 
@@ -273,13 +285,33 @@ class GOffice::Graph::Series {
     gog_series_populate_fill_type_combo($!ggs, $combo);
   }
 
-  method set_dim (
+  proto method set_dim (|)
+    is also<set-dim>
+  { * }
+
+  multi method set_dim (
+    @data,
+    :l(:label(:$labels)) is required
+  ) {
+    use GOffice::Data::Simple;
+
+    my $d = GOffice::Data::Vector::Str.new(@data);
+    samewith(0, $d);
+  }
+  multi method set_dim (
+    @data,
+    :d(:$data) where *.so = True
+  ) {
+    use GOffice::Data::Simple;
+
+    my $d = GOffice::Data::Vector::Val.new(@data);
+    samewith(1, $d);
+  }
+  multi method set_dim (
     Int()                   $dim_i,
     GOData()                $val,
     CArray[Pointer[GError]] $err    = gerror
-  )
-    is also<set-dim>
-  {
+  ) {
     my gint $d = $dim_i;
 
     clear_error;
