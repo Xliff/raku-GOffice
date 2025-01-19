@@ -7,7 +7,7 @@ use GLib::Raw::Structs;
 use GOffice::Raw::Definitions;
 use GOffice::Raw::Structs;
 
-unit package GOffice::Raw::Graph::DataSet;
+unit package GOffice::Raw::Graph::Dataset;
 
 ### /usr/src/goffice/goffice/graph/gog-data-set.h
 
