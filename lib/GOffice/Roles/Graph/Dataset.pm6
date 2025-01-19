@@ -4,7 +4,7 @@ use NativeCall;
 use Method::Also;
 
 use GOffice::Raw::Types;
-use GOffice::Raw::Graph::DataSet;
+use GOffice::Raw::Graph::Dataset;
 
 use GLib::Roles::Object;
 
@@ -12,10 +12,10 @@ role GOffice::Roles::Graph::Dataset {
   has GogDataset $!ggd is implementor;
 
   method GOffice::Raw::Definitions::GogDataset
-    is also<GogDataSet>
+    is also<GogDataset>
   { $!ggd }
 
-  method roleInit-GogDataaset is also<roleInit_GogDataaset> {
+  method roleInit-GogDataset is also<roleInit_GogDataset> {
     return if $!ggd;
 
     my \i = findProperImplementor( self.^attributes );
@@ -45,7 +45,10 @@ role GOffice::Roles::Graph::Dataset {
     gog_dataset_finalize($!ggd);
   }
 
-  method get_dim (Int() $dim_i, :$raw = False) is also<get-dim> {
+  method get-dim ($dim_i, :$raw = False) {
+    self.get_dim($dim_i, :$raw);
+  }
+  method get_dim (Int() $dim_i, :$raw = False) {
     my gint $d = $dim_i;
 
     propReturnObject(
@@ -55,13 +58,16 @@ role GOffice::Roles::Graph::Dataset {
     );
   }
 
-  method get_elem (Int() $dim_i) is also<get-elem> {
+  method get-elem ($dim_i) {
+    self.get_dim($dim_i);
+  }
+  method get_elem (Int() $dim_i) {
     my gint $d = $dim_i;
 
     gog_dataset_get_elem($!ggd, $dim_i);
   }
 
-  method get_type is also<get-type> {
+  method gogdataset_get_type {
     state ($n, $t);
 
     unstable_get_type( self.^name, &gog_dataset_get_type, $n, $t );
@@ -73,13 +79,14 @@ role GOffice::Roles::Graph::Dataset {
     gog_dataset_parent_changed($!ggd, $w);
   }
 
+  method set-dim ($dim_i, $val, $err = gerror) {
+    self.set_dim($dim_i, $val, $err);
+  }
   method set_dim (
     Int()                   $dim_i,
     GOData()                $val,
     CArray[Pointer[GError]] $err    = gerror
-  )
-    is also<set-dim>
-  {
+  ) {
     my gint $d = $dim_i;
 
     clear_error;
@@ -135,5 +142,9 @@ class GOffice::Graph::Dataset {
     my $o = self.bless( :$goffice-graph-dataset );
     $o.ref if $ref;
     $o;
+  }
+
+  method get_type is also<get-type> {
+    $.gogdataset_get_type
   }
 }
