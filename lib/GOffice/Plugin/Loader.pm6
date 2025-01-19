@@ -57,3 +57,23 @@ class GOffice::Plugin::Loader {
   }
 
 }
+
+class GOffice::Plugin::Loader::Module {
+  has GOPluginLoaderModule $!gplm is implementor;
+
+  method get_type {
+    state ($n, $t);
+
+    unstable_get_type(
+      self.^name,
+      &go_plugin_loader_module_get_type,
+      $n,
+      $t
+    );
+  }
+
+  method register_version (Str() $ver) {
+    go_plugin_loader_module_register_version($!gplm, $ver);
+  }
+
+}
