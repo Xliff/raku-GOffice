@@ -16,6 +16,7 @@
 #include <goffice/graph/goffice-graph.h>
 #include "/usr/src/goffice/goffice/graph/gog-axis-line-impl.h"
 #include "/usr/src/goffice/goffice/graph/gog-series-impl.h"
+#include <goffice/app/go-plugin-loader.h>
 
 #define s(name)     DLLEXPORT int sizeof_ ## name () { return sizeof(name); }
 
@@ -240,4 +241,8 @@ s(GogViewRequisition)
 
 int getAxisTypes (void) {
   return GOG_AXIS_TYPES;
+}
+
+int getPluginLoaderType (void) {
+	return GO_PLUGIN_LOADER_TYPE;
 }
