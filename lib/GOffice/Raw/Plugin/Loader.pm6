@@ -79,3 +79,19 @@ sub go_plugin_loader_unload_service (
   is      native(goffice)
   is      export
 { * }
+
+### /usr/src/goffice/goffice/app/go-plugin-loader-module.h
+
+sub go_plugin_loader_module_get_type
+  returns GType
+  is      native(goffice)
+  is      export
+{ * }
+
+sub go_plugin_loader_module_register_version (
+  Str $id,
+  Str $ver
+)
+  is      native(goffice)
+  is      export
+{ * }
