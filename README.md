@@ -127,7 +127,10 @@ It's best if you have a Top-Top-Level directory to keep all of the separate proj
 
 ```
 $ cd <top_level_dir>
+$ git clone https://github.com/Xliff/p6-GLib.git
+$ git clone https://github.com/Xliff/p6-GIO.git
 $ git clone https://github.com/Xliff/p6-Pango.git
+$ git clone https://github.com/Xliff/p6-GDK.git
 $ git clone https://github.com/Xliff/p6-GtkPlus.git
 $ git clone https://github.com/Xliff/raku-GOffice.git
 $ export P6_GTK_HOME=<top_level_dir>
